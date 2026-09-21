@@ -1,116 +1,116 @@
 ---
-title: Двенадцать дней с $200. Дневник, с убытками
+title: Twelve days with $200. The diary, losses included
 date: 2026-09-21
-summary: День за днём — от первого сканера до первой недели реальных денег. Что сломалось, какие правила родились из потерь, какие направления закрыты цифрами. Счёт на конец второй недели — $200 → $138.
-lang: ru
+summary: Day by day — from the first scanner to the first week of real money. What broke, which rules were born from losses, which directions were closed with numbers. Balance at the end of week two — $200 → $138.
+lang: en
 draft: false
 ---
 
-Условия эксперимента: $200, один ноутбук, автоматическая торговля. Вопрос — можно ли с нуля дойти до $100K за год. Показываю весь путь, включая минусы; цифры без округления в свою пользу. Это сводка первых двенадцати дней по ежедневным записям. [Анатомия рынка](/writing/2026-09-20-anatomy-of-a-meme-market/) — отдельно, здесь про то, как эта анатомия встречается с деньгами.
+The terms of the experiment: $200, one laptop, automated trading. The question — can it go from zero to $100K in a year. I show the whole path, minuses included; numbers are not rounded in my favor. This is a digest of the first twelve days from the daily log. [The anatomy of the market](/writing/2026-09-20-anatomy-of-a-meme-market/) is a separate piece; this one is about what happens when that anatomy meets money.
 
-## Счёт
+## The ledger
 
-| Период | Сделок | Результат | Счёт |
+| Period | Trades | Result | Balance |
 |---|---:|---:|---:|
-| Дни 1–4 (10–13.09) | 0 — сбор данных, сухие прогоны | — | $200 |
-| День 5 (14.09), первые деньги | 5 | −0,0103 ETH | |
-| Неделя 1 (14–15.09) | | −0,031 ETH ≈ −$70 | ~$130 |
-| Неделя 2 (15–21.09) | 62, 17 в плюсе | −0,0156 ETH | |
-| **Всего на 21.09** | | **−0,026 ETH ≈ −$62** | **$138** |
+| Days 1–4 (10–13.09) | 0 — data collection, dry runs | — | $200 |
+| Day 5 (14.09), first money | 5 | −0.0103 ETH | |
+| Week 1 (14–15.09) | | −0.031 ETH ≈ −$70 | ~$130 |
+| Week 2 (15–21.09) | 62, 17 winners | −0.0156 ETH | |
+| **Total as of 21.09** | | **−0.026 ETH ≈ −$62** | **$138** |
 
-Размер позиции — 0,003 ETH, около $7. Задача первого месяца — не заработать, а измерить, насколько жизнь отличается от симуляции. Отличается сильно.
+Position size — 0.003 ETH, about $7. The task of the first month is not to earn but to measure how far life diverges from simulation. It diverges a lot.
 
-## Дни 1–4. Сканер вместо бота
+## Days 1–4. A scanner instead of a bot
 
-**День 1.** Первое, что сделал, — сканер. За сутки 8 500 пулов. Ранние выводы со 100 пулов — «v3 в десять раз лучше», «топ-3 пула = 90% оборота» — через день оказались мусором.
+**Day 1.** The first thing I built was a scanner. 8,500 pools in a day. The early conclusions from 100 pools — "v3 is ten times better", "the top 3 pools = 90% of volume" — turned out to be garbage a day later.
 
-**День 2.** Докачал 20 часов истории: 12 749 пулов, 1,4 млн свопов. Грубый фильтр «≥ 10 свопов за первую минуту» отбирает пулы, из которых 83% доживают до какой-то торговли. Сканер переехал в tmux с `caffeinate`, потому что ночь без данных стоит дороже часа настройки. Главный факт про рынок: 70% свопов — в первые пять минут жизни пула. Окно для решения — секунды.
+**Day 2.** Backfilled 20 hours of history: 12,749 pools, 1.4M swaps. A crude filter, "≥ 10 swaps in the first minute", picks pools of which 83% survive to some trading. The scanner moved into tmux with `caffeinate`, because a night without data costs more than an hour of setup. The main fact about this market: 70% of swaps happen in the first five minutes of a pool's life. The decision window is seconds.
 
-**День 3.** Второй разбор данных перевернул картину: 35% пулов — ловушки с комиссией 50–99%, ещё огромный кусок — фабрики. И ошибка в собственных данных: для v4 направление свопа было перевёрнуто. Пересчитал 1,8 млн строк, половина ранних цифр была шумом. Самый сильный признак — не объём, а кто создал пул. Собрал торговый контур: котировки, симуляция, лимиты, позиции в базе. Запустил без денег.
+**Day 3.** The second pass over the data flipped the picture: 35% of pools are traps with a 50–99% fee, another huge chunk are factories. And a bug in my own data: for v4 the swap direction was inverted. Recomputed 1.8M rows; half of the early numbers had been noise. The strongest feature is not volume but who created the pool. Assembled the trading loop: quotes, simulation, limits, positions in the database. Started it without money.
 
-**День 4.** Сухой прогон за ночь: 20 позиций, +12…27% на бумаге. Три из них — раги: ликвидность вынули через 13 секунд – 3 минуты после входа, и симуляция этого не видела. Добавил слежение за ликвидностью по событиям. Параллельно нашёл, что сканер молча терял свопы: подписка умирала, библиотека тихо переходила на обрезанный опрос. Три пробела в данных за неделю. Все разборы сложил в один документ на 15 разделов; с этого дня любое решение обязано ссылаться на цифру оттуда.
+**Day 4.** Overnight dry run: 20 positions, +12…27% on paper. Three of them were rugs: liquidity pulled 13 seconds to 3 minutes after entry, and the simulation didn't see it. Added liquidity tracking via events. In parallel, found that the scanner was silently losing swaps: the subscription died and the library quietly fell back to truncated polling. Three gaps in the data in one week. Folded every analysis into one document, 15 sections; from that day every decision has to cite a number from it.
 
-## День 5. Первые деньги: −0,0103 ETH за пять сделок
+## Day 5. First money: −0.0103 ETH over five trades
 
-0,11 ETH на отдельном кошельке, ключ только в менеджере паролей, в коде его нет. Пять сделок — и сразу ответ на вопрос «чего не видит симуляция»:
+0.11 ETH on a separate wallet, the key only in a password manager, nowhere in the code. Five trades — and an immediate answer to "what does the simulation not see":
 
-- Два рага через **1,8 секунды** после покупки.
-- Три стопа по −47%: фабрика с одинаковой суммой ликвидности во всех своих пулах сливала по таймеру. Сухой прогон «продавал» по чужим ценам из ленты и этого не видел.
-- Баг: после покупки упала запись в базу, токены повисли без учёта. Теперь позиция пишется **до** отправки транзакции.
+- Two rugs **1.8 seconds** after the buy.
+- Three stops at −47%: a factory with an identical liquidity amount in all of its pools dumped on a timer. The dry run "sold" at other people's prices from the tape and never saw it.
+- A bug: after the buy, the database write failed and the tokens were left untracked. Now the position is written **before** the transaction is sent.
 
-Каждый убыток дня превратился в правило. Заодно разведал местный лендинг Morpho: 168 ликвидаций за всё время, 92% на одном токене, один ликвидатор забрал 56% бонусов. Ежедневного потока нет. Записал, отложил — как выяснилось, зря отложил, но об этом ниже.
+Every loss of the day became a rule. I also scouted the local Morpho deployment: 168 liquidations in its whole history, 92% on one token, one liquidator took 56% of the bonuses. No daily flow. Noted it and put it aside — wrongly, as it turned out, but more on that below.
 
-## День 6. Свой роутер и первый плюсовой день
+## Day 6. My own router and the first positive day
 
-Написал контракт-роутер под Uniswap v4: напрямую в PoolManager, без approve на каждый токен, автоматическая обёртка ETH. 15 тестов на форке. Против фабрик — три отпечатка: сумма первой ликвидности, хеш байткода токена, контракт-лаунчер; чёрный список пересчитывается каждый час. Перед покупкой — полная симуляция продажи с подменой баланса: ханипоты режутся до входа.
+Wrote a router contract for Uniswap v4: straight into the PoolManager, no approve per token, automatic ETH wrapping. 15 fork tests. Against factories — three fingerprints: the amount of the first liquidity add, the token bytecode hash, the launcher contract; the blacklist is recomputed hourly. Before every buy — a full sell simulation with a balance override: honeypots are cut before entry.
 
-Результат: COHOOD +0,0018 (тейк-профит +61%), LEVY −0,0005, одна покупка не прошла по проскальзыванию. Первый плюсовой день — на одной сделке.
+Result: COHOOD +0.0018 (take-profit +61%), LEVY −0.0005, one buy failed on slippage. The first positive day — on a single trade.
 
-Вечером — монитор арбитража между лаунчпадом и вторичными пулами. Идея казалась очевидной. 32 000 замеров по 20 парам за пять часов: ни одного плюсового круга, лучший −4,9%, в 74% замеров вторичка не котируется вовсе. Причина структурная: вторичные пулы создают сами авторы токенов с комиссией 5–20%. Направление закрыто за вечер.
+In the evening — an arbitrage monitor between the launchpad and secondary pools. The idea seemed obvious. 32,000 samples over 20 pairs in five hours: not one positive round trip, the best was −4.9%, in 74% of samples the secondary pool didn't quote at all. The reason is structural: secondary pools are created by the token authors themselves with a 5–20% fee. Direction closed in one evening.
 
-## День 7. Худший день
+## Day 7. The worst day
 
-Утром выяснилось: сканер три часа не видел новых пулов. Подписка умерла, а сторож считал её живой, потому что старые свопы продолжали идти. Бот всю ночь стоял без кандидатов.
+In the morning it turned out the scanner had not seen new pools for three hours. The subscription had died and the watchdog considered it alive, because old swaps kept flowing. The bot stood all night with no candidates.
 
-Днём — независимое ревью кода бота: 11 находок, 7 критических. Потеря позиций при таймауте квитанции, задвоение выручки при двух продажах, тейк-профит, который отключался после одной неудачи. Исправил за день. Чужие глаза дешевле своих денег.
+During the day — an independent code review of the bot: 11 findings, 7 critical. Positions lost on a receipt timeout, revenue double-counted on two sells, take-profit that switched itself off after one failure. Fixed in a day. Other people's eyes are cheaper than your own money.
 
-Вечером — фабрика, построенная под таких, как я. Новый кошелёк и новый лаунчер на каждый пул (два отпечатка из трёх обходит), 35–42 «покупателя» через один роутер за 30 секунд, вывод ликвидности на 34-й секунде — через секунду после моего входа на 30-й. Шесть позиций за 22 минуты, −0,018 ETH. Статистика по новому шаблону набиралась полчаса; бот за это время вошёл шесть раз.
+In the evening — a factory built for people like me. A new wallet and a new launcher for every pool (bypasses two fingerprints out of three), 35–42 "buyers" through one router in 30 seconds, liquidity pulled at second 34 — one second after my entry at second 30. Six positions in 22 minutes, −0.018 ETH. Statistics on the new template took half an hour to accumulate; the bot entered six times in that window.
 
-Ответ — не ещё один фильтр, а правило на весь класс риска: **входить только туда, где ликвидность нельзя вынуть** — LP-токен сожжён, лежит в локере или принадлежит лаунчеру с сотнями пулов без рагов. На истории за 72 часа такие пулы: 0% рагов, +0,38 mETH на сделку. Остальные: 3% рагов и −0,10. Цена правила — поток кандидатов падает с ~50 в день до ~6.
+The answer was not one more filter but a rule for the whole risk class: **only enter where liquidity cannot be pulled** — the LP token is burned, sits in a locker, or belongs to a launcher with hundreds of pools and no rugs. On 72 hours of history such pools: 0% rugs, +0.38 mETH per trade. The rest: 3% rugs and −0.10. The price of the rule — candidate flow drops from ~50 a day to ~6.
 
-И ещё в тот же день собрал цикл исследования: реестр гипотез со статусами и критерием приёмки, ежедневный дайджест, четыре роли-субагента — аналитик, разработчик, ревьюер, бэктестер — с общей памятью только в файлах. Первая гипотеза через него, «вторая волна» (вход в пул через 15–90 минут по возобновлению покупок), отклонена бэктестом за час: −0,23 mETH на сделку на днях подбора, −0,32 на проверке, вся сетка из 324 точек отрицательна. Дешевле, чем деньгами.
+The same day I also assembled a research loop: a hypothesis registry with statuses and an acceptance criterion, a daily digest, four sub-agent roles — analyst, developer, reviewer, backtester — sharing memory only through files. The first hypothesis through it, the "second wave" (enter a pool 15–90 minutes in, on renewed buying), was rejected by backtest within an hour: −0.23 mETH per trade on the fitting days, −0.32 on the validation days, the whole 324-point grid negative. Cheaper than money.
 
-## Дни 8–9. Правила в бою
+## Days 8–9. Rules in production
 
-**День 8.** Правило «только неизымаемая ликвидность» за ночь отклонило 9 пулов, три из них потом заругали. DIVIDENDS +0,0016, ECHO −0,0008. Убрал стоп по времени на 90-й секунде: по своим сделкам он стоил 0,0027 ETH — два тейк-профита не дождались, спас один раз. Правило против одной фабрики стало налогом на все пулы.
+**Day 8.** The "non-removable liquidity only" rule rejected 9 pools overnight, three of which were later rugged. DIVIDENDS +0.0016, ECHO −0.0008. Removed the 90-second time stop: on my own trades it had cost 0.0027 ETH — two take-profits never got the chance, it saved me once. A rule against one factory had become a tax on every pool.
 
-Наблюдатель за 1 180 заёмщиками Morpho: health factor каждой позиции раз в 10 секунд. Картина: $140M в стейбл-петлях на hf 1,0025–1,02 — в четверти процента от ликвидации. Дохода каждый день нет, хвост огромный.
+A watcher over 1,180 Morpho borrowers: the health factor of every position every 10 seconds. The picture: $140M in stablecoin loops at hf 1.0025–1.02 — a quarter of a percent from liquidation. No daily income, an enormous tail.
 
-Разведал лаг оракульных пулов токенизированных акций против перпов Hyperliquid: 15 минут в спокойную сессию, отставание ≤ 7 bp, окон нет. Отложено до замера на открытии рынка. Отрицательный результат за час лучше недели надежд.
+Scouted the oracle lag of tokenized-stock pools against Hyperliquid perps: 15 minutes in a quiet session, lag ≤ 7 bp, no windows. Deferred until a measurement at market open. A negative result in an hour beats a week of hope.
 
-**День 9.** Эксперимент: изымаемые пулы не пропускать, а брать в треть размера под стопом «два рага подряд — пауза на час». 17 сделок, +0,0026 ETH, лучшая — MELEE +0,0017. Первая сделка на уменьшенном размере, PCMN, — тейк-профит, но лента показала: 106 покупок из 107 сделал сам создатель. Повезло, а не заработал. Записал как отдельный признак.
+**Day 9.** Experiment: instead of skipping pools with removable liquidity, take them at a third of the size under a "two rugs in a row — pause for an hour" stop. 17 trades, +0.0026 ETH, best — MELEE +0.0017. The first trade at reduced size, PCMN, was a take-profit, but the tape showed 106 of 107 buys had been made by the creator himself. Luck, not earnings. Logged as a separate feature.
 
-Итог дня с новыми правилами: 20 сделок, +0,09 mETH на сделку — ровно порог, который сам себе поставил (+0,10 на ≥ 30 сделках). Счёт: −0,030 ETH с начала.
+The day's tally under the new rules: 20 trades, +0.09 mETH per trade — exactly the threshold I had set for myself (+0.10 over ≥ 30 trades). Balance: −0.030 ETH since the start.
 
-## День 10. Лучшая ночь и бэктест, который проиграл
+## Day 10. The best night, and a backtest that lost
 
-Шесть сделок, +0,0066 ETH (+$16). FLYPROTOCOL и FREEDOM закрылись по +50% через 6 секунд после входа, LOX дал пик +208%, взял +50%. Два стопа за 9–11 секунд. Характер стратегии — монетка, которая платит 2:1.
+Six trades, +0.0066 ETH (+$16). FLYPROTOCOL and FREEDOM closed at +50% six seconds after entry, LOX peaked at +208%, took +50%. Two stops within 9–11 seconds. The character of the strategy — a coin that pays 2:1.
 
-Проверил идею «не входить, если до меня уже продали заметный объём». На истории за 6 дней (188 пулов) EV вдвое выше. Включил на ночь: фильтр отсёк 18 пулов, **11 из них дошли бы до +50%** (VLAD +1800%, APG +353%). На 20 боевых сделках то же правило отсекло бы 4 из 6 побед. Выключил. Бэктест на 188 пулах проиграл восьми часам живого рынка — потому что ранний продавец в живых сделках оказался не раггером, а роутером чужого снайпера, фиксирующим прибыль.
+Tested the idea "don't enter if a notable amount has already been sold before me". On six days of history (188 pools) the EV doubles. Switched it on for the night: the filter cut 18 pools, **11 of which would have reached +50%** (VLAD +1800%, APG +353%). On 20 live trades the same rule would have cut 4 of the 6 wins. Switched it off. A backtest on 188 pools lost to eight hours of live market — because the early seller in live trades turned out to be not a rugger but another sniper's router taking profit.
 
-26 сделок с новыми правилами, +0,33 mETH на сделку. Но 60% плюса — за одну ночь. Выводом считать рано.
+26 trades under the new rules, +0.33 mETH per trade. But 60% of the plus came from a single night. Too early to call it a conclusion.
 
-## Дни 11–12. Рынок остыл, и главное открытие — не в снайпинге
+## Days 11–12. The market cools, and the main discovery isn't in sniping
 
-**День 11.** Четыре сделки, четыре стопа, −0,0016 ETH. Все одной формы: 16–28 покупателей через 1–2 роутера, слив через секунды после входа. Первый день без плюса с 16.09. Тест на 30 сделках закрыт: 37 сделок, +0,15 mETH на сделку — выше порога, но неделя в минусе.
+**Day 11.** Four trades, four stops, −0.0016 ETH. All the same shape: 16–28 buyers through 1–2 routers, dump seconds after entry. The first day without a plus since 16.09. The 30-trade test is closed: 37 trades, +0.15 mETH per trade — above the threshold, but the week is negative.
 
-Отдельно проверил три «очевидных» идеи масштабирования, чтобы закрыть их цифрами, а не мнением:
+Separately, checked three "obvious" scaling ideas, to close them with numbers rather than opinion:
 
-- *«Станок: $100 на позицию, тысячи сделок в день».* ETH-пулов со свопами — ~1 270 в день, не тысячи; после боевых фильтров ~12 кандидатов. Открыть воронку = вернуть фабрику седьмого дня уже на $100: шесть рагов ≈ −$600 за 22 минуты. Частота упирается в годные пулы, не в лимит.
-- *«DEX-DEX арбитраж по чуть-чуть с каждой пары».* За 48 часов токенов с двумя живыми ETH-пулами и нормальной комиссией — 9, восемь из них пыль. Единственная живая пара уже обслуживается восемью роутерами, 188 арбитражных ног, размер p50 0,04 ETH. Круг ETH→USDG→ETH на официальных пулах — минус на любом размере: −2,3 bp на $100, −9,3 bp на $5k.
-- *«Токенизированные акции против перпов».* Лаг ≤ 7 bp в спокойную сессию; открытие рынка так и не снял — воскресенье.
+- *"A machine: $100 per position, thousands of trades a day."* ETH pools with swaps — ~1,270 a day, not thousands; after the live filters, ~12 candidates. Opening the funnel = bringing back day seven's factory, now at $100: six rugs ≈ −$600 in 22 minutes. Frequency is limited by decent pools, not by the cap.
+- *"DEX-DEX arbitrage, a little from every pair."* Over 48 hours, tokens with two live ETH pools at a normal fee — 9, eight of them dust. The single live pair is already served by eight routers, 188 arbitrage legs, p50 size 0.04 ETH. The ETH→USDG→ETH round trip on the official pools is negative at any size: −2.3 bp at $100, −9.3 bp at $5k.
+- *"Tokenized stocks against perps."* Lag ≤ 7 bp in a quiet session; never measured the open — it was Sunday.
 
-Ночью — второй кластер ликвидаций на Morpho: 26 за полтора часа, $74k погашено, ≈ $9,4k бонусов. Мой наблюдатель видел всех 26 заёмщиков заранее и снова не поймал ни одной.
+Overnight — a second liquidation cluster on Morpho: 26 in an hour and a half, $74k repaid, ≈ $9.4k in bonuses. My watcher had seen all 26 borrowers in advance and again caught none.
 
-**День 12.** Снайпер без сделок: за сутки 900 отказов, ни одного кандидата, прошедшего все фильтры. Рынок мем-пулов на RH заметно остыл к концу недели. Разбор блоков победителя ликвидаций показал схему, которую я узнал — она лежала в моих старых репозиториях под другую сеть. Ликвидации вынесены в отдельный проект, снайпер остаётся как есть на 0,003 ETH. [Про ликвидации — отдельно.](/writing/2026-09-21-queue-not-speed/)
+**Day 12.** The sniper made no trades: 900 rejections in a day, not one candidate passed every filter. The RH meme-pool market cooled noticeably toward the end of the week. Dissecting the liquidation winner's blocks revealed a pattern I recognized — it was sitting in my old repositories, written for a different chain. Liquidations moved into a separate project; the sniper stays as is at 0.003 ETH. [Liquidations are their own story.](/writing/2026-09-21-queue-not-speed/)
 
-## Что закрыто цифрами
+## Closed with numbers
 
-| Направление | Замер | Результат |
+| Direction | Measurement | Result |
 |---|---|---|
-| Арбитраж лаунчпад ↔ вторичка | 32 616 кругов, 20 пар, 5 часов | 0 плюсовых, лучший −4,9% |
-| «Вторая волна» (вход через 15–90 мин) | Бэктест, сетка 324 точки | Все отрицательны, −0,3 mETH/сделку |
-| Лаг оракула токенизированных акций | 15 мин спокойной сессии | ≤ 7 bp, окон нет |
-| Фильтр ранних продаж | 8 часов в бою | Отсёк 11 будущих +50% из 18 |
-| DEX-DEX / CEX-DEX арбитраж | 48 часов, все пары | Одна живая пара, уже занята |
-| Стоп по времени 90 с | 6 сделок | −0,0027 ETH, снят |
+| Launchpad ↔ secondary arbitrage | 32,616 round trips, 20 pairs, 5 hours | 0 positive, best −4.9% |
+| "Second wave" (entry at 15–90 min) | Backtest, 324-point grid | All negative, −0.3 mETH/trade |
+| Tokenized-stock oracle lag | 15 min of a quiet session | ≤ 7 bp, no windows |
+| Early-sell filter | 8 hours live | Cut 11 future +50% out of 18 |
+| DEX-DEX / CEX-DEX arbitrage | 48 hours, all pairs | One live pair, already taken |
+| 90-second time stop | 6 trades | −0.0027 ETH, removed |
 
-Четыре «нет» за неделю — это тоже результат недели.
+Four "no"s in a week is also a week's result.
 
-## Что осталось от стратегии
+## What is left of the strategy
 
-39 боевых сделок с 16.09: 13 тейк-профитов, 16 стопов, 10 таймаутов, +0,112 mETH на сделку. Критерий +0,10 на ≥ 30 сделках формально держится, но последние сутки — 5 стопов из 6, и поток кандидатов упал почти до нуля. Пулы с запертой ликвидностью: 19 сделок, +0,161 mETH. С изымаемой (уменьшенным размером): 20 сделок, +0,065.
+39 live trades since 16.09: 13 take-profits, 16 stops, 10 timeouts, +0.112 mETH per trade. The +0.10 criterion over ≥ 30 trades formally holds, but the last day was 5 stops out of 6, and the candidate flow has fallen to nearly zero. Pools with locked liquidity: 19 trades, +0.161 mETH. Removable liquidity (at reduced size): 20 trades, +0.065.
 
-Честный вывод на конец второй недели: снайпинг на этом рынке — маленький положительный edge с толстым хвостом, который живёт, пока живёт поток новых пулов, и умирает вместе с ним. Один пойманный кластер ликвидаций стоит месяца такой работы. Поэтому третья неделя — про ликвидации.
+The honest conclusion at the end of week two: sniping on this market is a small positive edge with a fat tail, which lives as long as the flow of new pools lives and dies with it. One caught liquidation cluster is worth a month of this work. So week three is about liquidations.
 
-Адреса контрактов, ключи и точные пороги фильтров сюда не попадают.
+Contract addresses, keys and exact filter thresholds do not go here.

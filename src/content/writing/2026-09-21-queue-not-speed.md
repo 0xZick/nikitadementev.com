@@ -1,65 +1,65 @@
 ---
-title: Очередь, а не скорость. Как я смотрел на $16k ликвидаций и не взял ни одной
+title: Queue, not speed. How I watched $16k of liquidations and took none
 date: 2026-09-21
-summary: Два кластера ликвидаций на Morpho за неделю, мой наблюдатель видел все 40 позиций заранее — и ноль. Разбор блоков победителя показал, что он не быстрее. Он просто стоит в очереди каждый блок.
-lang: ru
+summary: Two liquidation clusters on Morpho in one week; my watcher saw all 40 positions in advance — and got zero. Dissecting the winner's blocks showed he isn't faster. He just stands in line every block.
+lang: en
 draft: false
 ---
 
-Это история о том, как правильно построенный наблюдатель проиграл 40 из 40, и почему это было не про скорость.
+This is a story about how a correctly built watcher lost 40 out of 40, and why it was not about speed.
 
-## Исходная точка: «потока нет»
+## Starting point: "there is no flow"
 
-На пятый день эксперимента я разведал деплой Morpho на Robinhood Chain. За всё время существования — 168 ликвидаций, 137 из них на одном токене, один ликвидатор забрал 56% бонусов. Ежедневного потока нет. Записал: остаётся только хвостовой риск депега в стейбл-петлях. Отложил.
+On day five of the experiment I scouted the Morpho deployment on Robinhood Chain. In its whole history — 168 liquidations, 137 of them on one token, one liquidator took 56% of the bonuses. No daily flow. I noted: what remains is the tail risk of a depeg in the stablecoin loops. Put it aside.
 
-На восьмой день всё же поднял наблюдателя: 1 180 заёмщиков, health factor каждой позиции раз в 10 секунд. Картина оказалась интереснее сводки: **$140M в стейбл-петлях на hf 1,0025–1,02** — в четверти процента от ликвидации. Плюс рынок с wsNET в залоге, где LIF доходит до 12,7%. Формула Morpho публичная: `min(1.15, 1 / (1 − 0.3·(1 − LLTV)))`, close factor нет — гасить можно всё сразу. Дохода каждый день нет, хвост огромный. Так и осталось: наблюдатель пишет, я смотрю на снайпер.
+On day eight I raised a watcher anyway: 1,180 borrowers, the health factor of every position every 10 seconds. The picture was more interesting than the summary: **$140M in stablecoin loops at hf 1.0025–1.02** — a quarter of a percent from liquidation. Plus a market with wsNET as collateral, where the LIF goes up to 12.7%. The Morpho formula is public: `min(1.15, 1 / (1 − 0.3·(1 − LLTV)))`, no close factor — the whole debt can be repaid at once. No income on any given day, an enormous tail. And so it stayed: the watcher writes, I look at the sniper.
 
-## Кластер первый: 14 ликвидаций за 90 минут
+## Cluster one: 14 liquidations in 90 minutes
 
-19 сентября, 03:00–04:30 UTC. Оракул wsNET перешагнул порог, и за полтора часа прошло **14 ликвидаций: $50,3k погашено, ≈ $6,4k бонусов**. Примерно шесть ботов. Один из них взял **шесть ликвидаций в одном блоке** — в том самом блоке, где обновился оракул.
+19 September, 03:00–04:30 UTC. The wsNET oracle crossed the threshold, and in an hour and a half **14 liquidations went through: $50.3k repaid, ≈ $6.4k in bonuses**. Roughly six bots. One of them took **six liquidations in a single block** — the very block in which the oracle updated.
 
-Мой 10-секундный поллер: 0 из 14. Он видел все 14 позиций заранее — часами, с hf 1,01–1,02. Он не видел момента.
+My 10-second poller: 0 of 14. It had seen all 14 positions in advance — for hours, at hf 1.01–1.02. It did not see the moment.
 
-Сначала объяснение было простым: блок 0,1 секунды, опрос раз в 10 секунд, разница в сто раз. Надо быстрее. Событийный цикл по логам оракула вместо опроса, предподписанные транзакции, WebSocket-фид вместо RPC. Записал в план.
+The first explanation was simple: 0.1-second blocks, polling every 10 seconds, a factor of a hundred. Need to be faster. An event loop on the oracle logs instead of polling, pre-signed transactions, a WebSocket feed instead of RPC. Wrote it into the plan.
 
-## Кластер второй: 26 за полтора часа
+## Cluster two: 26 in an hour and a half
 
-Ночь на 20 сентября. Второй кластер: **26 ликвидаций, $74k погашено, ≈ $9,4k бонусов**. Наблюдатель снова видел всех 26 заёмщиков заранее. И снова ноль.
+The night of 20 September. A second cluster: **26 liquidations, $74k repaid, ≈ $9.4k in bonuses**. The watcher had again seen all 26 borrowers in advance. And again zero.
 
-На этот раз я не стал переписывать поллер, а разобрал блоки победителя. Транзакция за транзакцией, блок за блоком до и после обновления оракула.
+This time I did not rewrite the poller; I dissected the winner's blocks. Transaction by transaction, block by block, before and after the oracle update.
 
-## Что делает победитель
+## What the winner does
 
-Он не «видит» ликвидацию. Он **предсказывает** её по свопу в пуле залога — и с этого момента шлёт транзакцию ликвидации **каждый блок**. Шесть транзакций на блок. Все ревертятся: оракул ещё не перешагнул, `Morpho.liquidate` отбрасывает здоровую позицию. Попытка стоит около $0,01. В блоке, где оракул наконец обновился, его транзакция стоит первой — потому что она стояла первой и в предыдущих ста блоках.
+He does not "see" the liquidation. He **predicts** it from a swap in the collateral pool — and from that moment sends a liquidation transaction **every block**. Six transactions per block. All of them revert: the oracle hasn't crossed yet, `Morpho.liquidate` rejects a healthy position. An attempt costs about $0.01. In the block where the oracle finally updates, his transaction is first — because it was first in the previous hundred blocks too.
 
-На Robinhood Chain нет публичного мемпула, `maxPriorityFeePerGas` равен нулю, порядок в блоке — кто первый пришёл. Обогнать того, кто уже стоит в очереди, невозможно по определению: к моменту, когда ты увидел лог оракула, блок с этим логом уже собран, и ликвидация в нём уже чужая.
+Robinhood Chain has no public mempool, `maxPriorityFeePerGas` is zero, block order is first come, first served. Overtaking someone already standing in line is impossible by definition: by the time you have seen the oracle log, the block containing that log is already built, and the liquidation in it already belongs to someone else.
 
-**Это не скорость реакции. Это очередь.** Побеждает не тот, кто быстрее увидел событие, а тот, кто заплатил за место в каждом блоке, пока событие не случилось. Ста блоков по $0,06 хватает, чтобы забрать $1,3k бонуса с одной позиции.
+**This is not reaction speed. This is a queue.** The winner is not whoever saw the event fastest, but whoever paid for a place in every block until the event happened. A hundred blocks at $0.06 is enough to take a $1.3k bonus off one position.
 
-Тот же вывод, который снайпер дал мне неделей раньше в другой форме: за первый блок бороться не за что, если ты пытаешься его *увидеть*. За него можно только *стоять*.
+The same conclusion the sniper had given me a week earlier in a different form: the first block is not worth fighting for if you are trying to *see* it. You can only *stand* in it.
 
-## Флудер из старого репозитория
+## The flooder from an old repository
 
-Утром двенадцатого дня я вспомнил, где видел эту схему. Год назад, под другую сеть, я писал «флудер»: код, который шлёт одну и ту же транзакцию с N аккаунтов каждые X миллисекунд, пока она не пройдёт. Ровно то, что делает победитель. Не писать заново, а перенести.
+On the morning of day twelve I remembered where I had seen this pattern. A year ago, for a different chain, I had written a "flooder": code that sends the same transaction from N accounts every X milliseconds until it goes through. Exactly what the winner does. Don't rewrite it, port it.
 
-Под это собран отдельный проект — ликвидации вынесены из проекта снайпера полностью, торговля и ликвидации теперь два разных репозитория:
+A separate project was assembled for this — liquidations moved out of the sniper project entirely, trading and liquidations are now two different repositories:
 
-- **Флудер** — старый код, с адаптацией под FCFS-фид сети.
-- **Контракты ликвидатора Morpho** — мои же, с одной существенной деталью: Morpho отдаёт залог в колбэке *до* оплаты долга, поэтому flash loan не нужен, капитал не нужен. Залог приходит, продаётся, долг гасится из выручки, разница остаётся.
-- **Наблюдатель** — тот, что уже есть, но теперь его задача не «поймать момент», а «сказать флудеру, за какую позицию встать в очередь и с какого блока».
+- **The flooder** — the old code, adapted to the chain's FCFS feed.
+- **The Morpho liquidator contracts** — also mine, with one essential detail: Morpho hands over the collateral in a callback *before* the debt is paid, so no flash loan is needed, no capital is needed. The collateral arrives, gets sold, the debt is repaid from the proceeds, the difference stays.
+- **The watcher** — the one that already exists, but its job is no longer "catch the moment" but "tell the flooder which position to queue for, and from which block".
 
-Последнее — ключевой вопрос третьей недели. Стоять в очереди за каждой позицией с hf < 1,02 — это тысячи ревертов в сутки; при $0,01 за попытку это дёшево, но не бесплатно, и на кластере в 26 позиций очередь надо держать за всеми сразу. Первый шаг — прогнать флудер на **записанных** кластерах: с какого блока мы начали бы слать, в каком блоке оказались бы, сколько взяли бы. Потом shadow-режим до следующего дампа.
+The last part is the key question of week three. Queuing for every position with hf < 1.02 means thousands of reverts a day; at $0.01 an attempt that is cheap but not free, and on a 26-position cluster the queue has to be held for all of them at once. The first step is to run the flooder against the **recorded** clusters: from which block would we have started sending, which block would we have landed in, how many would we have taken. Then shadow mode until the next dump.
 
-## Почему это важнее снайпера
+## Why this matters more than the sniper
 
-Снайпер за две недели — −0,026 ETH при 62 сделках, и поток кандидатов к концу недели упал до нуля. Один кластер ликвидаций — $6–9k бонусов за полтора часа, и таких кластеров за неделю было два. Даже одна десятая доля одного кластера — месяц работы снайпера в его лучшую неделю.
+The sniper over two weeks — −0.026 ETH on 62 trades, and the candidate flow fell to zero by the end of the week. One liquidation cluster — $6–9k in bonuses in an hour and a half, and there were two such clusters in one week. Even a tenth of one cluster is a month of the sniper's work in its best week.
 
-При этом ликвидации — не тот рынок, куда можно прийти с $200 и без инженерии. Здесь нужен контракт, который правильно обрабатывает колбэк, флудер, который не роняет ноду и не теряет нонсы, и наблюдатель, который знает, за кем стоять. У меня оказались все три — два из них написаны раньше, для других задач. Это и есть причина, по которой эксперимент делаю я, а не кто-то с большим счётом.
+At the same time, liquidations are not a market you can walk into with $200 and no engineering. You need a contract that handles the callback correctly, a flooder that doesn't crash the node or lose nonces, and a watcher that knows whom to queue for. I turned out to have all three — two of them written earlier, for other tasks. That is precisely why this experiment is being run by me and not by someone with a bigger account.
 
-## Что измерить дальше
+## What to measure next
 
-1. На записанных кластерах: доля ликвидаций, где `Liquidate` и обновление оракула — в одном блоке. Если ≥ 80% — только очередь; если меньше — есть окно и для событийного цикла.
-2. Переигровка флудера по этим кластерам: блок старта, позиция в блоке, взятые позиции.
-3. Shadow до следующего дампа wsNET.
+1. On the recorded clusters: the share of liquidations where `Liquidate` and the oracle update land in the same block. If ≥ 80% — queue only; if less — there is a window for an event loop as well.
+2. Replay the flooder over those clusters: start block, position in block, positions taken.
+3. Shadow until the next wsNET dump.
 
-Цифры — в воскресенье. Адреса контрактов, ключи и пороги сюда не попадают.
+Numbers on Sunday. Contract addresses, keys and thresholds do not go here.

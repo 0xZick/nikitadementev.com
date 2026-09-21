@@ -2,20 +2,22 @@
 title: $200, one laptop, a new L2
 date: 2026-09-19
 summary: Public experiment — can automatic trading compound $200 toward $100k in a year. First nine days, with the losses left in.
-lang: ru
+lang: en
 draft: false
 ---
 
-Эксперимент: $200, один ноутбук и MEV-боты. Вопрос — можно ли с нуля дойти до $100K за год на автоматической торговле. Весь путь с цифрами, включая минусы.
+The experiment: $200, one laptop and MEV bots. The question — can automated trading go from zero to $100K in a year. I am showing the whole path with numbers, including the minuses.
 
-Поле: Robinhood Chain — новый L2, блок 0,1 с, без публичного мемпула, Uniswap v4. Мало ботов, тысячи мем-пулов в день. Первые 3 дня — не торговля, а сбор данных: свой сканер пишет каждый пул, своп и движение ликвидности. 12 700 пулов, 1,4 млн свопов.
+The field: Robinhood Chain — a new L2, 0.1 s blocks, no public mempool, Uniswap v4. Few bots, thousands of meme pools a day. The first 3 days were not trading but data collection: my own scanner writes every pool, swap and liquidity move. 12,700 pools, 1.4M swaps.
 
-Данные: 35% пулов — ловушки с комиссией 50–99%. Ещё ~40% — фабрики: создают пул, накручивают объём, вынимают ликвидность через минуту. Настоящих проектов — единицы процентов. Без этой статистики снайпинг тут — донат фабрикам.
+The data: 35% of pools are traps with a 50–99% fee. Another ~40% are factories: create a pool, pump the volume, pull liquidity a minute later. Real projects are a few percent. Without that statistic, sniping here is a donation to the factories.
 
-Первая неделя реальных денег: −0,031 ETH (≈ −$70). Раги через 1,8 с после покупки. Фабрика, вынимавшая ликвидность через секунду после входа — шесть позиций за 22 минуты. Каждая потеря дала правило; главное — входить только туда, где LP сожжён или в локере.
+First week of real money: −0.031 ETH (≈ −$70). Rugs 1.8 s after the buy. A factory that pulled liquidity one second after my entry — six positions in 22 minutes. Every loss produced a rule; the main one — only enter where the LP is burned or locked.
 
-Закрыл три направления цифрами, а не надеждами: арбитраж лаунчпад↔вторичка (32 000 замеров, ни одного плюса), «вторая волна» (бэктест −0,3 mETH на сделку), токенизированные акции (лаг оракула ≤7 bp). «Нет» — тоже результат.
+Closed three directions with numbers rather than hope: launchpad ↔ secondary arbitrage (32,000 samples, not one positive), the "second wave" (backtest −0.3 mETH per trade), tokenized stocks (oracle lag ≤ 7 bp). A "no" is also a result.
 
-На день 10: 26 сделок с новыми правилами. Лучшая ночь +0,0066 ETH за 6 сделок. Счёт: $200 → $145.
+Day 10: 26 trades under the new rules. Best night +0.0066 ETH over 6 trades. Balance: $200 → $145.
 
-Адреса контрактов, ключи и точные пороги фильтров сюда не попадают.
+The long versions: [the anatomy of the market](/writing/2026-09-20-anatomy-of-a-meme-market/), [the twelve-day diary](/writing/2026-09-21-twelve-days/), [why liquidations are a queue, not a race](/writing/2026-09-21-queue-not-speed/).
+
+Contract addresses, keys and exact filter thresholds do not go here.

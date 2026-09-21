@@ -28,7 +28,7 @@ draft: false
 ---
 ```
 
-`draft: true` keeps it off `/writing` and `/llms.txt`. Do not publish keys, contract addresses, or exact filter thresholds.
+`draft: true` keeps it off `/writing` and `/rss.xml`. Notes are published in English; Russian originals sit in `src/content/writing-ru/` (not a collection, not built). Do not publish keys, contract addresses, or exact filter thresholds.
 
 ## Pages
 

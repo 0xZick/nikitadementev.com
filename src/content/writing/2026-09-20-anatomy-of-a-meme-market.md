@@ -1,153 +1,153 @@
 ---
-title: 45 000 пулов за четыре дня. Анатомия мем-рынка на новом L2
+title: 45,000 pools in four days. Anatomy of a meme market on a new L2
 date: 2026-09-20
-summary: Что показал сканер, когда я записал каждый пул, своп и движение ликвидности на Robinhood Chain — прежде чем поставить первый доллар. Пять разных миров вместо одного рынка, ловушки, фабрики и единственный признак, который что-то предсказывает.
-lang: ru
+summary: What the scanner showed once I recorded every pool, swap and liquidity move on Robinhood Chain — before putting in the first dollar. Five different worlds instead of one market, traps, factories, and the single feature that predicts anything.
+lang: en
 draft: false
 ---
 
-Это разбор данных, а не история про деньги. Историю про деньги я веду отдельно; здесь — то, на что она опирается. Всё ниже собрано с 10 по 13 сентября 2026 на Robinhood Chain: новый L2, блок 0,1 с, публичного мемпула нет, Uniswap v4 как основной DEX, тысячи мем-пулов в день и почти нет ботов. Молодой рынок — единственное место, где $200 вообще имеют смысл, и единственное, где статистику ещё никто не собрал.
+This is a data write-up, not a money story. The money story runs separately; this is what it stands on. Everything below was collected 10–13 September 2026 on Robinhood Chain: a new L2, 0.1 s blocks, no public mempool, Uniswap v4 as the main DEX, thousands of meme pools a day and almost no bots. A young market is the only place where $200 makes any sense, and the only one where nobody has collected the statistics yet.
 
-## Сначала сканер, потом бот
+## Scanner first, bot second
 
-Первое, что я написал, — не торговый бот, а сканер. Каждый `Initialize`, каждый `Swap`, каждое движение ликвидности пишутся в SQLite с точностью до блока. Пул, доживший до трёх часов, размечается: сколько свопов, какой оборот, вынули ли ликвидность, кто создал.
+The first thing I wrote was not a trading bot but a scanner. Every `Initialize`, every `Swap`, every liquidity move goes into SQLite with block precision. A pool that survives to three hours gets labeled: how many swaps, what volume, whether liquidity was pulled, who created it.
 
-| Датасет на 13.09, 22:10 UTC | |
+| Dataset as of 13.09, 22:10 UTC | |
 |---|---:|
-| Пулов | 44 807 |
-| Свопов | 4 833 953 |
-| Событий ликвидности (с 13.09 03:00) | 142 463 |
-| Размечено (дожили до 3 ч) | 36 839 |
-| Уникальных создателей | 7 684 |
+| Pools | 44,807 |
+| Swaps | 4,833,953 |
+| Liquidity events (since 13.09 03:00) | 142,463 |
+| Labeled (survived to 3 h) | 36,839 |
+| Unique creators | 7,684 |
 
-Почему не торговать сразу: первые «выводы» со 100 пулов оказались мусором. «v3 в десять раз лучше v4», «топ-3 пула делают 90% оборота», «флаг BEFORE_SWAP в хуке — верная смерть» — через день данные опровергли всё. Выводы делаются на тысячах пулов, не на сотне. И даже на тысячах — с оговорками, о которых ниже.
+Why not trade right away: the first "conclusions" from 100 pools turned out to be garbage. "v3 is ten times better than v4", "the top 3 pools make 90% of volume", "a BEFORE_SWAP flag in the hook is certain death" — a day later the data overturned all of it. Conclusions are drawn on thousands of pools, not a hundred. And even on thousands — with caveats, below.
 
-## Пять миров вместо одного рынка
+## Five worlds instead of one market
 
-Средние по базе бессмысленны, потому что «мем-пул на RH» — это пять разных явлений с разной экономикой. Полные три часа наблюдения, без окна провала данных 10.09 (n = 32 007):
+Averages over the whole base are meaningless, because a "meme pool on RH" is five different phenomena with different economics. Full three hours of observation, excluding the 10.09 data-gap window (n = 32,007):
 
-| Сегмент | Пулов | Мёртвых | Значимых | Раг за 10 мин |
+| Segment | Pools | Dead | Meaningful | Rug within 10 min |
 |---|---:|---:|---:|---:|
-| v4 без хука, комиссия ≥ 50% — **ловушки** | 11 948 | 80% | **0%** | — |
-| v4 без хука, нормальная комиссия | 10 040 | 30% | 24% | **25%** |
-| Хук токенизированных акций | 6 095 | 60% | 33%* | — |
-| Другие хуки | 2 055 | 46% | 28% | 2% |
+| v4, no hook, fee ≥ 50% — **traps** | 11,948 | 80% | **0%** | — |
+| v4, no hook, normal fee | 10,040 | 30% | 24% | **25%** |
+| Tokenized-stock hook | 6,095 | 60% | 33%* | — |
+| Other hooks | 2,055 | 46% | 28% | 2% |
 | v3 | 875 | 43% | 23% | — |
-| **Лаунчпад** | 619 | 0% | **99%** | **0%** |
+| **Launchpad** | 619 | 0% | **99%** | **0%** |
 | v2 | 375 | 21% | 56%** | — |
 
-«Значимый» — оборот ≥ 1 ETH за три часа. «Мёртвый» — ни одного свопа после первых минут. \* У пулов акций «значимость» считается в единицах токена-акции, это другой масштаб. \*\* 91% свопов в v2 делает один контракт; из 52 «значимых» v2-пулов у 36 не больше трёх отправителей. Это не рынок, это один скрипт.
+"Meaningful" — ≥ 1 ETH of volume in three hours. "Dead" — no swaps after the first minutes. \* For stock pools "meaningful" is measured in units of the stock token, a different scale. \*\* 91% of v2 swaps come from one contract; of the 52 "meaningful" v2 pools, 36 have at most three senders. That is not a market, that is one script.
 
-Значимость — не прибыль. Из пулов с ≥ 10 свопами за первую минуту 79–90% становятся значимыми, но лишь 39–45% заканчивают выше +10% от цены входа на 60-й секунде. Грубый фильтр по активности отбирает пулы, в которых что-то происходит; что именно происходит — отдельный вопрос.
+Meaningful is not profitable. Of pools with ≥ 10 swaps in the first minute, 79–90% become meaningful, but only 39–45% finish above +10% from the entry price at second 60. A crude activity filter selects pools where something happens; what exactly happens is a separate question.
 
-## Ловушки: комиссия до 100%
+## Traps: fees up to 100%
 
-Uniswap v4 позволяет задать LP-комиссию вплоть до 100%. Около дюжины ботов с фиксированными подписями создают пул под каждый новый токен, который видят: 1 087 таких пулов появились через ~5,5 минут после лаунчпад-пула того же токена, тысячи — под токены, у которых нормального пула нет вообще. У некоторых токенов 70–200 пулов-ловушек. Свопов в них единицы, но крупнейший одиночный убыток в базе — 0,099 ETH при комиссии 88%: купить можно, продать — только отдав почти всё.
+Uniswap v4 allows an LP fee of up to 100%. About a dozen bots with fixed signatures create a pool for every new token they see: 1,087 such pools appeared ~5.5 minutes after the launchpad pool of the same token, thousands more for tokens with no normal pool at all. Some tokens have 70–200 trap pools. Swaps in them are few, but the largest single loss in the base is 0.099 ETH at an 88% fee: you can buy, and you can sell only by giving almost everything back.
 
-Отдельный шум — «лестница»: один адрес создал 533 пула для двух токенов с комиссиями 100, 110, 120 … 5 000 базисных пунктов. Зачем — не знаю; возможно, чтобы забить роутеры.
+A separate kind of noise — the "ladder": one address created 533 pools for two tokens with fees of 100, 110, 120 … 5,000 basis points. Why, I don't know; possibly to clog routers.
 
-Правило простое: аномальная комиссия без динамического хука — пропуск, роутер идёт только в самый ликвидный пул токена. Без этого правила любая статистика по базе бессмысленна: 35–40% всех пулов — ловушки.
+The rule is simple: an abnormal fee without a dynamic hook — skip; the router only goes into the token's most liquid pool. Without this rule any statistic over the base is meaningless: 35–40% of all pools are traps.
 
-## Фабрики: механика рага
+## Factories: how a rug works
 
-С 13.09 сканер пишет события ликвидности, и картина рагов стала конкретной. Из 1 773 обычных v4-пулов с ликвидностью у **25% она вынута на ≥ 50% в первые 10 минут**. У лаунчпада — 0%, у пулов с другими хуками — 2%.
+Since 13.09 the scanner records liquidity events, and the rug picture became concrete. Of 1,773 ordinary v4 pools with liquidity, **25% have ≥ 50% of it pulled within the first 10 minutes**. On the launchpad — 0%, on pools with other hooks — 2%.
 
-Кто вынимает: в 12 из 12 проверенных позиций бота — **создатель пула**, он же единственный поставщик ликвидности. Схема повторяется дословно:
+Who pulls it: in 12 of 12 bot positions I checked — **the pool creator**, who is also the only liquidity provider. The pattern repeats word for word:
 
-1. Свежий кошелёк.
-2. Токен → пул → ликвидность.
-3. 11 свопов через один роутер на 0,86 ETH суммарно — цена ×1,37 за 30 секунд.
-4. Вывод ликвидности через 30–230 секунд после запуска.
+1. Fresh wallet.
+2. Token → pool → liquidity.
+3. 11 swaps through one router, 0.86 ETH in total — price ×1.37 in 30 seconds.
+4. Liquidity pulled 30–230 seconds after launch.
 
-Единственный покупатель — он сам. Каждый раз новый кошелёк, поэтому фильтр «новый деплоер» такое пропускает. Позже фабрики научились и большему — новый лаунчер и новый шаблон токена на каждый пул, — но это уже часть истории про деньги.
+The only buyer is himself. A new wallet every time, so a "new deployer" filter lets it through. Later the factories learned more — a new launcher and a new token template for every pool — but that belongs to the money story.
 
-Признак, доступный на 30-й секунде (277 пулов с ≥ 5 свопами):
+The feature available at second 30 (277 pools with ≥ 5 swaps):
 
-| Правило | Пулов остаётся | Раг среди них |
+| Rule | Pools left | Rug rate among them |
 |---|---:|---:|
-| Без фильтра | 100% | 30% |
-| ≥ 3 независимых покупателей | 34% | **4%** |
-| ≥ 5 независимых покупателей | 25% | 1% |
-| Глубина ≥ 1 ETH и ≥ 3 покупателей | 18% | 0% |
+| No filter | 100% | 30% |
+| ≥ 3 independent buyers | 34% | **4%** |
+| ≥ 5 independent buyers | 25% | 1% |
+| Depth ≥ 1 ETH and ≥ 3 buyers | 18% | 0% |
 
-И парадокс, который важнее таблицы: у бота в сухом прогоне именно пулы с одним покупателем принесли +26% (43 из 55 сделок), а пулы с тремя и больше — −30% (n = 10). Бот де-факто заезжает в самопрокачку раггера и в четырёх случаях из пяти успевает выйти по тейк-профиту раньше, чем тот вынет ликвидность: TP в среднем через 65–85 с после входа, вывод — через 55 с. В одном случае из пяти не успевает. Это и есть те 20% списаний.
+And a paradox that matters more than the table: in the dry run it was precisely the one-buyer pools that made the bot +26% (43 of 55 trades), while pools with three or more buyers made −30% (n = 10). The bot is de facto riding the rugger's own pump and in four cases out of five exits on take-profit before he pulls liquidity: TP on average 65–85 s after entry, the pull 55 s after. In one case out of five it doesn't make it. Those are the 20% write-offs.
 
-## Лаунчпад: ноль рагов, но игра на десять минут
+## The launchpad: zero rugs, but a ten-minute game
 
-Единственный хук, у которого 99% пулов значимы, — местный лаунчпад. Ликвидность у хука, вынуть её создатель не может: из 119 пулов с ликвидностью — ноль выводов. Роутер лаунчпада проводит 48% всех ETH-свопов в базе; сам хук продал собранных токенов на +204 ETH за первые два дня.
+The only hook with 99% meaningful pools is the local launchpad. Liquidity sits with the hook and the creator cannot pull it: of 119 pools with liquidity — zero withdrawals. The launchpad router carries 48% of all ETH swaps in the base; the hook itself sold the tokens it collected for +204 ETH in the first two days.
 
-Но это не значит, что там можно заработать. Цена относительно входа на 30-й секунде (ETH-пулы, n = 64):
+But that does not mean money can be made there. Price relative to entry at second 30 (ETH pools, n = 64):
 
-| | 1 мин | 5 мин | 10 мин | 20 мин | 30 мин | 60 мин |
+| | 1 min | 5 min | 10 min | 20 min | 30 min | 60 min |
 |---|---:|---:|---:|---:|---:|---:|
-| p25 | 0,89 | 0,79 | 0,37 | 0,13 | 0,10 | 0,08 |
-| медиана | 1,00 | 1,05 | 0,89 | 0,64 | 0,40 | 0,16 |
-| p75 | 1,16 | 1,53 | 1,59 | 1,45 | 1,80 | 0,88 |
-| p90 | 1,36 | 2,07 | 2,36 | 2,22 | 2,62 | 2,19 |
+| p25 | 0.89 | 0.79 | 0.37 | 0.13 | 0.10 | 0.08 |
+| median | 1.00 | 1.05 | 0.89 | 0.64 | 0.40 | 0.16 |
+| p75 | 1.16 | 1.53 | 1.59 | 1.45 | 1.80 | 0.88 |
+| p90 | 1.36 | 2.07 | 2.36 | 2.22 | 2.62 | 2.19 |
 
-Пик — медиана 1,62× на восьмой минуте, p90 — 9,1×. Через три часа медиана 0,145×. Объём останавливается в медиане на 65-й минуте. Симуляция говорит, что узкие стопы здесь проигрывают (TP +30 / SL −30 / 5 минут → −5,5%), а асимметрия работает: половину позиции на +100%, трейлинг, выход к 20-й минуте → +10…20% на бумаге. Сухой прогон 41 сделки дал −1,9%: 24 стопа на пятой минуте при пике +25%. Пулы гоняют боты, и котировка на наш размер прыгает сильнее, чем принты в ленте. Вывод пока: небольшой и шумный edge, не подтверждённый.
+Peak: median 1.62× at minute eight, p90 9.1×. After three hours the median is 0.145×. Volume stops at a median of minute 65. The simulation says tight stops lose here (TP +30 / SL −30 / 5 minutes → −5.5%), and asymmetry works: half the position at +100%, trailing, out by minute 20 → +10…20% on paper. A dry run of 41 trades gave −1.9%: 24 stops at minute five with a peak of +25%. Bots churn these pools, and the quote for our size jumps harder than the prints in the tape. Verdict for now: a small, noisy edge, unconfirmed.
 
-## Создатель пула — главный признак
+## The pool creator is the main feature
 
-Из всего, что можно посчитать на 30-й секунде, сильнее всего предсказывает исход не объём, не число свопов и не хук, а **кто создал пул**. Три когорты по одним и тем же правилам входа:
+Of everything you can compute at second 30, the strongest predictor of the outcome is not volume, not swap count, not the hook — it is **who created the pool**. Three cohorts under identical entry rules:
 
-| Создатель | Пулов | Значимых | Средний исход | Медиана |
+| Creator | Pools | Meaningful | Mean outcome | Median |
 |---|---:|---:|---:|---:|
-| Новый деплоер, первый пул | 425 | 71% | **+21,2%** | **+9,4%** |
-| Повторный деплоер | 101 | 28% | −2,5% | −11,2% |
-| Вторичный пул уже существующего токена | 70 | 36% | −8,1% | −19,9% |
+| New deployer, first pool | 425 | 71% | **+21.2%** | **+9.4%** |
+| Repeat deployer | 101 | 28% | −2.5% | −11.2% |
+| Secondary pool of an existing token | 70 | 36% | −8.1% | −19.9% |
 
-Чёрный список серийных создателей собирается сам: кошелёк с 24 токенами и 24 мёртвыми пулами, кошелёк с 23 пулами одного и того же тестового токена, кошелёк со 103 пулами и 9% значимых. Лаунчпад-пулы создают четыре релейера — для них правило не действует.
+The blacklist of serial creators builds itself: a wallet with 24 tokens and 24 dead pools, a wallet with 23 pools of the same test token, a wallet with 103 pools and 9% meaningful. Launchpad pools are created by four relayers — the rule does not apply to them.
 
-Ограничение признака — те самые фабрики: они меняют кошелёк на каждый токен и проходят как «новые». Поэтому создатель — необходимое условие, не достаточное.
+The feature's limit is the factories: they change wallets for every token and pass as "new". So the creator is a necessary condition, not a sufficient one.
 
-## Хуки как идентификатор платформы
+## Hooks as platform identifiers
 
-Адрес хука — это, по сути, идентификатор платформы, и разброс между платформами больше, чем между любыми фильтрами по активности. Есть хуки с 66% значимых пулов и хуки с 0% — при одинаковых флагах. Сам флаг `BEFORE_SWAP` ничего не предсказывает. Белый и чёрный списки хуков пересчитываются раз в сутки.
+A hook address is effectively a platform identifier, and the spread between platforms is wider than between any activity filters. There are hooks with 66% meaningful pools and hooks with 0% — with identical flags. The `BEFORE_SWAP` flag by itself predicts nothing. The hook whitelist and blacklist are recomputed daily.
 
-## За первый блок бороться не за что
+## The first block is not worth fighting for
 
-Интуиция снайпера — «надо быть первым». На этом рынке она не работает.
+The sniper's intuition — "you have to be first". On this market it doesn't hold.
 
-- В обычных пулах цена через минуту после первой сделки в медиане на 13% **выше** первой. На лаунчпаде — ниже первой, там первую покупку делает сам запускающий в транзакции создания.
-- В первых трёх свопах обычных пулов 163 кошелька-бота дают 58% сделок, 42% из них — в первые 5 секунд. Но размер — пыль: 265 пулов по 0,0008 ETH, 84 пула по 0,0004 ETH. Это зонды на ханипот, не позиции.
-- Единственный участник с деньгами и отбором в первых секундах: 23 пула по 0,035 ETH, 61% значимых.
-- «Значимость» пула не зависит от того, кто вошёл первым.
+- In ordinary pools the price one minute after the first trade is, at the median, 13% **above** the first trade. On the launchpad it is below the first — there the first buy is made by the launcher inside the creation transaction.
+- In the first three swaps of ordinary pools, 163 bot wallets make 58% of trades, 42% of those within the first 5 seconds. But the size is dust: 265 pools at 0.0008 ETH, 84 pools at 0.0004 ETH. These are honeypot probes, not positions.
+- The only participant with money and selectivity in the first seconds: 23 pools at 0.035 ETH, 61% meaningful.
+- A pool's "meaningfulness" does not depend on who entered first.
 
-Публичного мемпула нет, приоритетная комиссия равна нулю, порядок в блоке — кто первый пришёл. Гонка есть, но не за первый блок: за первую *осмысленную* минуту.
+No public mempool, priority fee is zero, block order is first come, first served. There is a race, but not for the first block: for the first *meaningful* minute.
 
-## Время суток
+## Time of day
 
-По часам UTC: 02–05 — 25–30% значимых при меньшем потоке; 14–16 — 16–18% при вдвое большем шуме; 22–01 — 12–24%. Ночь с субботы на воскресенье дала 10% значимых и 43% мёртвых против 26% / 24% в будни. Режим рынка меняется по дням, одни сутки — не статистика, неделя данных обязательна. Поток пулов при этом рос: 355 в час 10.09 → 755 в час 13.09.
+By UTC hour: 02–05 — 25–30% meaningful at lower flow; 14–16 — 16–18% at twice the noise; 22–01 — 12–24%. The Saturday-to-Sunday night gave 10% meaningful and 43% dead against 26% / 24% on weekdays. The market regime changes by day; one day is not statistics, a week of data is mandatory. Meanwhile the pool flow kept growing: 355/hour on 10.09 → 755/hour on 13.09.
 
-## Что ломалось в данных
+## What broke in the data
 
-Половина ранних цифр была шумом не из-за рынка, а из-за моих дефектов. Список честный:
+Half of the early numbers were noise not because of the market but because of my own defects. The honest list:
 
-| Дефект | Эффект | Исправление |
+| Defect | Effect | Fix |
 |---|---|---|
-| Направление свопа для v4 считалось по знаку, как в v3 | Покупки и продажи поменяны местами во всех v4-пулах | Отдельная функция направления; пересчёт 1,82 млн строк |
-| WebSocket-подписка на `Swap` тихо деградирует: библиотека уходит в опрос с обрезанными `getLogs`, а `Initialize` живёт | Два провала сбора по 3 часа: 5–10% свопов, тысячи пулов выглядят «мёртвыми» | Сверка через `getLogs` каждые 30 с; провалы перезалиты |
-| При остановке сканер размечал пулы младше 3 часов | 2 158 пулов размечены по 69 минутам | Молодые не размечаются; при старте дособираются |
-| Поле создателя не заполнялось | Главный признак был невидим | Резолв при вставке + пересчёт |
-| Симулятор «продавал» по последней цене замолчавшего пула | ROI трейлинга завышен в разы | Штраф за выход из мёртвого пула, отдельная «пессимистичная» колонка |
-| Нода режет плотные `getLogs` («log query timed out») | Backfill часами | Диапазоны ≤ 20 тыс. блоков |
+| Swap direction for v4 computed from the sign, as in v3 | Buys and sells swapped in every v4 pool | Dedicated direction function; 1.82M rows recomputed |
+| The `Swap` WebSocket subscription silently degrades: the library falls back to polling with truncated `getLogs`, while `Initialize` keeps working | Two 3-hour collection gaps: 5–10% of swaps, thousands of pools look "dead" | Reconciliation via `getLogs` every 30 s; gaps backfilled |
+| On shutdown the scanner labeled pools younger than 3 hours | 2,158 pools labeled on 69 minutes of data | Young pools are not labeled; adopted on restart |
+| Creator field was not populated | The main feature was invisible | Resolved on insert + recomputed |
+| The simulator "sold" at the last price of a pool that had gone silent | Trailing ROI overstated several times | Penalty for exiting a dead pool, a separate "pessimistic" column |
+| The node cuts dense `getLogs` ("log query timed out") | Backfill took hours | Ranges ≤ 20k blocks |
 
-Инфраструктура ломается тише стратегий. Стратегия, которая не работает, видна в PnL. Подписка, которая молча перестала получать события, видна только в том, что бот ночью «не нашёл кандидатов».
+Infrastructure breaks more quietly than strategies. A strategy that doesn't work shows up in PnL. A subscription that silently stopped receiving events shows up only as "the bot found no candidates overnight".
 
-## Что из этого стало стратегией
+## What became the strategy
 
-Единственный сегмент с честным плюсом — первый пул нового создателя с настоящими покупками в первые 30 секунд: вход на 30-й секунде, тейк-профит +50% целиком, стоп −30%, выход при выводе ликвидности. Три сухих прогона подряд:
+The only segment with an honest plus: the first pool of a new creator with real buys in the first 30 seconds — enter at second 30, take profit +50% on the whole position, stop −30%, exit on liquidity pull. Three dry runs in a row:
 
-| Прогон | Сделок | В плюс | Раги | ROI |
+| Run | Trades | Winners | Rugs | ROI |
 |---|---:|---:|---:|---:|
-| 12.09, ночь | 20 | 60% | 3 | +4,6% |
-| 13.09, день | 84 | 67% | 17 | +13,0% |
-| 13.09, вечер | 61 | 70% | 13 | +14,0% |
-| **Всего** | **177** | **67%** | **36 (20%)** | **+12,2%** |
+| 12.09, night | 20 | 60% | 3 | +4.6% |
+| 13.09, day | 84 | 67% | 17 | +13.0% |
+| 13.09, evening | 61 | 70% | 13 | +14.0% |
+| **Total** | **177** | **67%** | **36 (20%)** | **+12.2%** |
 
-Симуляция даёт +19…26% — она рагов не видит. Переигровка тех же позиций по ценам свопов с жёстким проскальзыванием — 0…+7%. Честная оценка: **0…+12% на позицию, хвост толстый**. Структура дня: 50 тейк-профитов (+0,084 ETH, в среднем через 85 с), 17 списаний (−0,051), 13 таймаутов (+0,005), 4 стопа (−0,005).
+The simulation says +19…26% — it doesn't see rugs. Replaying the same positions at swap prices with harsh slippage — 0…+7%. Honest estimate: **0…+12% per position, with a fat tail**. The structure of a day: 50 take-profits (+0.084 ETH, on average after 85 s), 17 write-offs (−0.051), 13 timeouts (+0.005), 4 stops (−0.005).
 
-Что сухой прогон не видел и что первая неделя реальных денег добавила — в дневнике. Спойлер: разрыв между «котировка в момент решения» и «исполнение секундой позже» оказался больше, чем весь edge.
+What the dry run could not see, and what the first week of real money added, is in [the diary](/writing/2026-09-21-twelve-days/). Spoiler: the gap between "the quote at the moment of decision" and "execution one second later" turned out to be bigger than the whole edge.
 
-Адреса контрактов, ключи и точные пороги фильтров сюда не попадают.
+Contract addresses, keys and exact filter thresholds do not go here.
