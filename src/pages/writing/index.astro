@@ -7,6 +7,7 @@ const notes = (await getCollection('writing', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
+const minutes = (body?: string) => Math.max(1, Math.round((body ?? '').split(/\s+/).length / 180));
 ---
 
 <Base title={`_writing — ${person.name}`} description="Notes: experiments, numbers, what did not work." pageId="writing">
@@ -18,7 +19,11 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
       {
         notes.map((n) => (
           <li class="paper">
-            <span class="paper-date">{fmt(n.data.date)}</span>
+            <span class="paper-date">
+              {fmt(n.data.date)}
+              <br />
+              <span class="paper-min">{minutes(n.body)} min</span>
+            </span>
             <a href={`/writing/${n.id}/`} lang={n.data.lang}>
               {n.data.title}
             </a>

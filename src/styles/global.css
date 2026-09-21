@@ -894,3 +894,20 @@ button {
   display: inline-block;
   min-width: 14rem;
 }
+
+.paper-min {
+  font-weight: 400;
+  color: var(--text-third);
+}
+
+.article {
+  overflow-x: auto;
+}
+
+.prose td:first-child {
+  min-width: 9rem;
+}
+
+.prose ol {
+  padding-left: 2.2rem;
+}
