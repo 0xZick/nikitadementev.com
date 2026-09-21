@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import { person, stats, career } from '../data/person';
+---
+
+<Base title={`${person.name} — ${person.kicker}`} pageId="index">
+  <section class="band band-solid">
+    <div class="hero">
+      <p class="hero-kicker">{person.kicker}</p>
+      <h1 class="hero-name">Nikita<br />Dementev</h1>
+      <p class="hero-lede" set:html={person.ledeHtml} />
+      <div class="btn-row">
+        <a class="btn btn-primary" href={person.telegram}>Telegram — {person.telegramHandle}</a>
+        <a class="btn btn-outline" href={`mailto:${person.email}`}>{person.email}</a>
+        <a class="btn btn-dark" href={person.github}>_github</a>
+      </div>
+      <p class="links-row">
+        <a href={person.x}>→ X</a>
+        <a href="/bio">→ Bio</a>
+        <a href="/work">→ Work</a>
+        <a href="/llms.txt">→ llms.txt</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-inner">
+      <h2 class="section-h">01 — profile</h2>
+      <p>
+        I write Solidity and TypeScript, hire people, and take protocols through audit to mainnet. The work is public
+        enough to check: contracts on GitHub, volumes on the products, audit firms named. Almost all of it is dated.
+      </p>
+      <h3 class="prose-h3">Protocol engineering</h3>
+      <p>
+        At Liquorice I designed the lending core — interest-rate model, liquidations, Chainlink Functions oracle,
+        EIP-712 intent settlement — and shipped it on Ethereum, Arbitrum and Base after MixBytes and Pessimistic.
+        Throughput ~$1M/day, no incidents on upgrades. Before that I was sole author of the zRex leverage contracts
+        (account factory, custom account abstraction, flashloan → swap → deposit) and co-wrote NFTxCards (10k+ ERC-721,
+        VRF loot boxes, Merkle airdrops).
+      </p>
+      <h3 class="prose-h3">From zero</h3>
+      <p>
+        Empty repo to users is the repeating move. nft.multisender.app I founded — bulk ERC-721 / 1155, ~$1M volume in
+        the first two years, WalletConnect-verified. Same pattern on NFTxCards and zRex. I hire; I still write the core
+        myself.
+      </p>
+      <h3 class="prose-h3">Teams</h3>
+      <p>
+        Hired ~30 engineers over the career; teams of up to 10. Process is the leverage: Feature-Sliced Design,
+        Storybook, E2E in CI, review standards. People I hired from outside IT made it to senior.
+      </p>
+      <h3 class="prose-h3">Tornado Cash, then out</h3>
+      <p>
+        On the PepperSec core team I wrote the relayer twice, the subgraph, the public CLI, and moved ZK proof
+        generation into Web Workers (minutes to seconds). I left ~6 months before the 2022 sanctions. That sentence
+        belongs on the front page because the internet compresses it wrong. <a href="/bio">Full biography →</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="band band-solid">
+    <div class="band-inner">
+      <h2 class="section-h">02 — now</h2>
+      <p>
+        Independent after Liquorice (Aug 2026). I ship products. Telegram is the door —
+        <a href={person.telegram}>{person.telegramHandle}</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-inner">
+      <h2 class="section-h">03 — career</h2>
+      {
+        career.map((row) => (
+          <div class={`tl ${row.hot ? 'hot' : ''}`}>
+            <div class="tl-yr">{row.years}</div>
+            <div class="tl-rail"></div>
+            <div>
+              <div class="tl-title">{row.title}</div>
+              <p class="tl-desc">{row.text}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="band band-solid">
+    <div class="band-inner">
+      <h2 class="section-h">04 — results</h2>
+      <div class="tiles">
+        {
+          stats.map((s) => (
+            <div class="tile">
+              <div class={`stat-value ${s.hot ? 'hot' : ''}`}>{s.value}</div>
+              <div class="stat-label">{s.label}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="band-inner">
+      <h2 class="section-h">05 — contact</h2>
+      <p class="contact-big">
+        Telegram is fastest — <a href={person.telegram}>{person.telegramHandle}</a>
+      </p>
+      <p class="meta">
+        {person.email} · {person.github.replace('https://', '')} · {person.x.replace('https://', '')}
+      </p>
+    </div>
+  </section>
+</Base>

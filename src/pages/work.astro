@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import { person, products, github, stack } from '../data/person';
+---
+
+<Base
+  title={`_work — ${person.name}`}
+  description="Protocols, products, and open source — with a place to check each claim."
+  pageId="work"
+>
+  <h1 class="page-title">_work</h1>
+  <div class="article prose">
+    <p class="meta">receipts, not case-study cards · no keys, no unpublished thresholds</p>
+
+    <p>
+      Four companies I led or co-founded, products I started from an empty repo, and a bulk-sender that is still
+      running. Each row has something you can open: a repo, a product URL, an audit firm, a volume.
+    </p>
+
+    <h2>_products</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Product</th>
+          <th>Role</th>
+          <th>Years</th>
+          <th>Proof</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          products.map((p, i) => (
+            <tr>
+              <td>{i + 1}</td>
+              <td>{p.href ? <a href={p.href}>{p.name}</a> : p.name}</td>
+              <td>{p.role}</td>
+              <td class="nowrap">{p.years}</td>
+              <td>{p.proof}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <h2>_stack</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Tools</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          stack.map((row) => (
+            <tr>
+              <td>{row.area}</td>
+              <td>{row.items}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <h2>_how</h2>
+    <p>
+      Same method across jobs: start from zero, write the model, find the invariants, then the perturbation that
+      breaks them. In contracts that is the state machine and the conserved quantities. In teams it is cadence —
+      review, Storybook, E2E in CI — so shipping is weekly, not heroic. I hire; I still write the core myself.
+    </p>
+
+    <h2>_github</h2>
+    <ul>
+      {
+        github.map((repo) => (
+          <li>
+            <a href={repo.includes('/') ? `https://github.com/${repo}` : `${person.github}/${repo}`}>{repo}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <p>
+      <a href={person.github}>{person.github.replace('https://', '')}</a>
+    </p>
+  </div>
+</Base>

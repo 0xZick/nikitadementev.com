@@ -1,0 +1,130 @@
+---
+import '../styles/global.css';
+import { person } from '../data/person';
+
+type Props = {
+  title: string;
+  description?: string;
+  pageId?: string;
+};
+
+const { title, description = person.description, pageId = 'index' } = Astro.props;
+
+const nav = [
+  { href: '/', id: 'index', label: '_index' },
+  { href: '/bio', id: 'bio', label: '_bio' },
+  { href: '/work', id: 'work', label: '_work' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    '@id': `${person.site}/#person`,
+    name: person.name,
+    alternateName: [person.handle, '0xzick', 'zick0x'],
+    url: person.site,
+    email: `mailto:${person.email}`,
+    jobTitle: 'Engineering Lead / Protocol Engineer',
+    homeLocation: { '@type': 'Place', name: 'Dubai, United Arab Emirates' },
+    knowsLanguage: ['en', 'ru'],
+    alumniOf: {
+      '@type': 'CollegeOrUniversity',
+      name: 'Vladivostok State University of Economics and Service',
+    },
+    sameAs: [person.github, person.x, person.telegram],
+    description: person.description,
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class={pageId === 'index' ? 'page-index' : undefined}>
+    <div class="layout">
+      <header class="header">
+        <div class="header-inner">
+          <a class="logo" href="/" aria-label={person.handle}>
+            <span class="logo-text">_{person.handle.toLowerCase()}</span>
+          </a>
+
+          <nav class="nav" aria-label="Site">
+            <ul class="nav-list">
+              {
+                nav.map((item) => (
+                  <li>
+                    <a href={item.href} aria-current={pageId === item.id ? 'page' : undefined}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+
+          <div class="header-actions">
+            <a class="btn btn-dark" href={person.telegram}>_telegram</a>
+            <button class="burger" type="button" aria-label="Open menu" data-burger>
+              <span></span>
+            </button>
+          </div>
+        </div>
+        <nav class="mobile-nav" data-mobile-nav>
+          {
+            nav.map((item) => (
+              <a href={item.href} aria-current={pageId === item.id ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+          <a href={person.telegram}>_telegram</a>
+          <a href="/llms.txt">_llms.txt</a>
+        </nav>
+      </header>
+
+      <main class="main">
+        <slot />
+      </main>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <span>© {new Date().getFullYear()} {person.name} · {person.location}</span>
+          <div class="footer-socials">
+            <span>_socials:</span>
+            <a href={person.github}>github</a>
+            <a href={person.x}>x</a>
+            <a href={person.telegram}>telegram</a>
+            <a href={`mailto:${person.email}`}>email</a>
+          </div>
+          <span>
+            <a href="/llms.txt">_llms.txt</a> · cite-as: {person.handle}
+          </span>
+        </div>
+      </footer>
+    </div>
+    <script>
+      const burger = document.querySelector('[data-burger]');
+      const panel = document.querySelector('[data-mobile-nav]');
+      burger?.addEventListener('click', () => {
+        panel?.classList.toggle('is-open');
+      });
+    </script>
+  </body>
+</html>
