@@ -78,9 +78,9 @@ export const stats = [
 export const career = [
   {
     years: '2024 — 26',
-    title: 'Engineering Lead & Technical Advisor — Liquorice',
+    title: 'Smart Contract Engineer & Technical Advisor — Liquorice',
     hot: false,
-    text: 'DeFi lending + intent settlement for market makers (CoW Swap, Uniswap X, 1inch Fusion, Bebop). Wrote the protocol core, ran MixBytes / Pessimistic audits, shipped Ethereum / Arbitrum / Base with no incidents. Dashboard from an empty repo. Team of up to 10. Portugal, remote. Jul 2024 – Aug 2026.',
+    text: 'DeFi lending + intent settlement for market makers (CoW Swap, Uniswap X, 1inch Fusion, Bebop). Wrote the protocol core, ran MixBytes / Pessimistic audits, shipped Ethereum / Arbitrum / Base with no incidents. Dashboard from an empty repo. Deepest Web3 experience on the team, so also reviews, architecture and mentoring. Portugal, remote. Jul 2024 – Aug 2026.',
   },
   {
     years: '2022 — 24',
