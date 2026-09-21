@@ -10,7 +10,7 @@ export const person = {
   x: 'https://x.com/0xZick',
   site: 'https://0xzick.dev',
   ledeHtml:
-    'Engineering lead and protocol engineer. Ten years in software, eight on Ethereum. I start products from an empty repo and take them to users — founder of <strong>nft.multisender.app</strong>, co-founder of NFTxCards and zRexFinance. Engineer at <span class="nowrap">Tornado Cash (~$1B peak TVL)</span>. Known online as <strong>0xZick</strong>.',
+    'Engineering lead and protocol engineer. Ten years in software, eight on Ethereum. I start products from an empty repo and take them to users — founder of <strong>nft.multisender.app</strong> (~$300k/year profit), co-founder of NFTxCards and zRexFinance. Engineer at <span class="nowrap">Tornado Cash (~$1B peak TVL)</span>. Known online as <strong>0xZick</strong>.',
   description:
     'Nikita Dementev (0xZick): engineering lead and Solidity / TypeScript engineer in Dubai. Engineer at Tornado Cash (~$1B peak TVL), founder of nft.multisender.app, co-founder of NFTxCards and zRexFinance.',
   get lede() {
@@ -65,7 +65,7 @@ export const stats = [
   { value: '~$1B', label: 'peak TVL, Tornado Cash', hot: true },
   { value: '~$1M/d', label: 'Liquorice protocol throughput', hot: false },
   { value: '40+', label: 'EVM chain contracts', hot: false },
-  { value: '~$1M', label: 'volume, nft.multisender.app (founder)', hot: true },
+  { value: '~$300k', label: 'yearly profit, nft.multisender.app (founder)', hot: true },
 ];
 
 export const career = [
@@ -146,7 +146,7 @@ export const products = [
     name: 'nft.multisender.app',
     years: '2021—',
     role: 'founder, ERC-721 / 1155',
-    proof: '~$1M volume in the first 2 years; WalletConnect-verified; maintenance mode',
+    proof: '~$300k/year profit; ~$1M volume in the first 2 years; WalletConnect-verified',
     href: 'https://nft.multisender.app',
   },
   {
