@@ -12,7 +12,21 @@ npm run dev
 
 http://localhost:4321
 
-Canonical in config is `https://0xzick.dev` — change `astro.config.mjs` and `src/data/person.ts` when the real domain is known.
+Canonical: `https://nikitadementev.com` (set in `astro.config.mjs`, `src/data/person.ts`, `public/robots.txt`, `public/CNAME`, `og-source.html`).
+
+## Deploy
+
+GitHub Pages via `.github/workflows/deploy.yml`: every push to `main` builds with `withastro/action` and deploys. Repo settings → Pages → Source: **GitHub Actions**; Custom domain: `nikitadementev.com`, Enforce HTTPS.
+
+DNS at the registrar:
+
+| Type | Host | Value |
+|---|---|---|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | `<github-user>.github.io` |
 
 ## Publish a note
 

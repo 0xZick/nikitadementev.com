@@ -8,7 +8,7 @@ export const person = {
   telegramHandle: '@zick0x',
   github: 'https://github.com/0xZick',
   x: 'https://x.com/0xZick',
-  site: 'https://0xzick.dev',
+  site: 'https://nikitadementev.com',
   ledeHtml:
     'Engineering lead and protocol engineer. Ten years in software, eight on Ethereum. I start products from an empty repo and take them to users — founder of <strong>nft.multisender.app</strong> (~$300k/year profit), co-founder of NFTxCards and zRexFinance. Engineer at Tornado Cash (~$1B&nbsp;peak&nbsp;TVL). Known online as <strong>0xZick</strong>.',
   description:
