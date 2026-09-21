@@ -10,12 +10,19 @@ export const person = {
   x: 'https://x.com/0xZick',
   site: 'https://0xzick.dev',
   ledeHtml:
-    'Engineering lead and protocol engineer. Ten years in software, eight on Ethereum. I start products from an empty repo and take them to users — founder of <strong>nft.multisender.app</strong> (~$300k/year profit), co-founder of NFTxCards and zRexFinance. Engineer at <span class="nowrap">Tornado Cash (~$1B peak TVL)</span>. Known online as <strong>0xZick</strong>.',
+    'Engineering lead and protocol engineer. Ten years in software, eight on Ethereum. I start products from an empty repo and take them to users — founder of <strong>nft.multisender.app</strong> (~$300k/year profit), co-founder of NFTxCards and zRexFinance. Engineer at Tornado Cash (~$1B&nbsp;peak&nbsp;TVL). Known online as <strong>0xZick</strong>.',
   description:
     'Nikita Dementev (0xZick): engineering lead and Solidity / TypeScript engineer in Dubai. Engineer at Tornado Cash (~$1B peak TVL), founder of nft.multisender.app, co-founder of NFTxCards and zRexFinance.',
   get lede() {
-    return this.ledeHtml.replace(/<[^>]+>/g, '');
+    return this.ledeHtml.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
   },
+};
+
+export const now = {
+  status: 'Independent since Sep 2026, after two years at Liquorice. Building my own products.',
+  openTo: 'protocol / full-stack contract work, technical advisory, co-founding — DeFi, wallets, infra',
+  where: 'Dubai, UTC+4 · remote worldwide · English B2, Russian native',
+  reply: 'Telegram, same day',
 };
 
 export const languages = [
@@ -61,10 +68,10 @@ export const stats = [
   { value: '10+', label: 'years in production software', hot: false },
   { value: '8', label: 'years in blockchain / web3', hot: true },
   { value: '~30', label: 'engineers hired over the career', hot: false },
-  { value: '~$800M', label: 'lifetime volume through product', hot: false },
+  { value: '~$800M', label: 'Multisender.app lifetime volume', hot: false },
   { value: '~$1B', label: 'peak TVL, Tornado Cash', hot: true },
   { value: '~$1M/d', label: 'Liquorice protocol throughput', hot: false },
-  { value: '40+', label: 'EVM chain contracts', hot: false },
+  { value: '40+', label: 'EVM chains with my contracts live', hot: false },
   { value: '~$300k', label: 'yearly profit, nft.multisender.app (founder)', hot: true },
 ];
 

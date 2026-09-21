@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { person, stats, career, products, github, stack, education, languages } from '../data/person';
+import { person, stats, career, products, github, stack, education, languages, now } from '../data/person';
 
 export const GET: APIRoute = async () => {
   const body = [
@@ -17,6 +17,14 @@ export const GET: APIRoute = async () => {
     `- Index: ${person.site}/`,
     `- Bio: ${person.site}/bio/`,
     `- Work: ${person.site}/work/`,
+    `- Writing: ${person.site}/writing/ (RSS: ${person.site}/rss.xml)`,
+    `- CV (PDF): ${person.site}/Nikita-Dementev-CV.pdf`,
+    '',
+    '## Now',
+    `- Status: ${now.status}`,
+    `- Open to: ${now.openTo}`,
+    `- Where: ${now.where}`,
+    `- Reply: ${now.reply}`,
     '',
     '## At a glance',
     ...stats.map((s) => `- ${s.label}: ${s.value}`),

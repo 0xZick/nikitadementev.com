@@ -6,14 +6,18 @@ type Props = {
   title: string;
   description?: string;
   pageId?: string;
+  ogType?: 'website' | 'article';
 };
 
-const { title, description = person.description, pageId = 'index' } = Astro.props;
+const { title, description = person.description, pageId = 'index', ogType = 'website' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
 
 const nav = [
   { href: '/', id: 'index', label: '_index' },
   { href: '/bio', id: 'bio', label: '_bio' },
   { href: '/work', id: 'work', label: '_work' },
+  { href: '/writing', id: 'writing', label: '_writing' },
 ];
 
 const jsonLd = {
@@ -35,6 +39,11 @@ const jsonLd = {
     },
     sameAs: [person.github, person.x, person.telegram],
     description: person.description,
+    founder: [
+      { '@type': 'Organization', name: 'NFT Multisender', url: 'https://nft.multisender.app' },
+      { '@type': 'Organization', name: 'zRexFinance', url: 'https://github.com/zrex-finance/core-contracts' },
+      { '@type': 'Organization', name: 'NFTxCards', url: 'https://nftxcards.com' },
+    ],
   },
 };
 ---
@@ -44,11 +53,28 @@ const jsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1118" media="(prefers-color-scheme: dark)" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={person.handle} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@0xZick" />
+    <meta name="twitter:creator" content="@0xZick" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`${person.name} — writing`} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -95,7 +121,6 @@ const jsonLd = {
             ))
           }
           <a href={person.telegram}>_telegram</a>
-          <a href="/llms.txt">_llms.txt</a>
         </nav>
       </header>
 
@@ -109,12 +134,12 @@ const jsonLd = {
           <div class="footer-socials">
             <span>_socials:</span>
             <a href={person.github}>github</a>
-            <a href={person.x}>x</a>
+            <a href={person.x}>x.com</a>
             <a href={person.telegram}>telegram</a>
             <a href={`mailto:${person.email}`}>email</a>
           </div>
           <span>
-            <a href="/llms.txt">_llms.txt</a> · cite-as: {person.handle}
+            <a href="/llms.txt">_llms.txt</a> · <a href="/rss.xml">_rss</a> · <a href="/Nikita-Dementev-CV.pdf">_cv.pdf</a>
           </span>
         </div>
       </footer>

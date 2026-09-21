@@ -37,8 +37,18 @@ draft: false
 | `/` | Record: lede, profile, now, career, numbers |
 | `/bio` | Full sourced biography (prose only; tables live on /work) |
 | `/work` | Products, stack, GitHub |
+| `/writing` | Notes from `src/content/writing/`; `/rss.xml` feed |
 | `/llms.txt` | Machine digest for language models |
+| `/og.png` | Share image. Source: `og-source.html`, rendered 1200×630 with headless Chrome |
+| `/Nikita-Dementev-CV.pdf` | Copy of the Engineering Lead EN résumé; replace when the PDF changes |
 
-`/writing` is parked until notes are reviewed. Markdown can sit in `src/content/writing/` with `draft: true`.
+Sitemap at `/sitemap-index.xml` (via `@astrojs/sitemap`), `robots.txt` in `public/`. Dark theme follows `prefers-color-scheme`.
+
+Regenerate the share image after editing `og-source.html`:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
+  --window-size=1200,630 --virtual-time-budget=4000 --screenshot=public/og.png "file://$PWD/og-source.html"
+```
 
 Tornado Cash is stated as Mar 2020 – Feb 2022, left ~6 months before OFAC. Do not compress that.

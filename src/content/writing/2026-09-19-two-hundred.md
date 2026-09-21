@@ -3,7 +3,7 @@ title: $200, one laptop, a new L2
 date: 2026-09-19
 summary: Public experiment — can automatic trading compound $200 toward $100k in a year. First nine days, with the losses left in.
 lang: ru
-draft: true
+draft: false
 ---
 
 Эксперимент: $200, один ноутбук и MEV-боты. Вопрос — можно ли с нуля дойти до $100K за год на автоматической торговле. Весь путь с цифрами, включая минусы.

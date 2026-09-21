@@ -1,7 +1,29 @@
 ---
-export function getStaticPaths() {
-  return [];
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { person } from '../../data/person';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('writing', ({ data }) => !data.draft);
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
 }
 
-return Astro.redirect('/');
+const { note } = Astro.props;
+const { Content } = await render(note);
+const date = note.data.date.toISOString().slice(0, 10);
 ---
+
+<Base title={`${note.data.title} — ${person.handle}`} description={note.data.summary} pageId="writing" ogType="article">
+  <h1 class="page-title">_writing</h1>
+  <article class="article prose" lang={note.data.lang}>
+    <header class="note-head">
+      <p class="hero-kicker">note · {date}</p>
+      <p class="hero-name" style="font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.1">{note.data.title}</p>
+      <p class="meta">{note.data.summary}</p>
+    </header>
+    <Content />
+    <p class="meta" style="margin-top: 3.2rem">
+      <a href="/writing">← all notes</a> · questions: <a href={person.telegram}>{person.telegramHandle}</a>
+    </p>
+  </article>
+</Base>

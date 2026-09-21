@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { person, stats, career } from '../data/person';
+import { person, stats, career, now } from '../data/person';
 ---
 
 <Base title={`${person.name} — ${person.kicker}`} pageId="index">
@@ -18,6 +18,8 @@ import { person, stats, career } from '../data/person';
         <a href={person.x}>→ X</a>
         <a href="/bio">→ Bio</a>
         <a href="/work">→ Work</a>
+        <a href="/writing">→ Writing</a>
+        <a href="/Nikita-Dementev-CV.pdf">→ CV.pdf</a>
         <a href="/llms.txt">→ llms.txt</a>
       </p>
     </div>
@@ -61,10 +63,29 @@ import { person, stats, career } from '../data/person';
   <section class="band band-solid">
     <div class="band-inner">
       <h2 class="section-h">02 — now</h2>
-      <p>
-        Independent after Liquorice (Aug 2026). I ship products. Telegram is the door —
-        <a href={person.telegram}>{person.telegramHandle}</a>.
-      </p>
+      <p>{now.status}</p>
+      <ul class="now-list">
+        <li>
+          <b>open to</b>
+          <span>{now.openTo}</span>
+        </li>
+        <li>
+          <b>where</b>
+          <span>{now.where}</span>
+        </li>
+        <li>
+          <b>reply</b>
+          <span>
+            {now.reply} — <a href={person.telegram}>{person.telegramHandle}</a>
+          </span>
+        </li>
+        <li>
+          <b>latest</b>
+          <span>
+            <a href="/writing">notes</a> · <a href="/Nikita-Dementev-CV.pdf">CV (PDF)</a>
+          </span>
+        </li>
+      </ul>
     </div>
   </section>
 
