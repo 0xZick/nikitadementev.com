@@ -50,12 +50,13 @@ export const stack = [
   },
   {
     area: 'Backend',
-    items: 'NestJS, PostgreSQL, Redis, MongoDB, The Graph, relayers, bots, Docker, CI/CD',
+    items:
+      'NestJS, PostgreSQL, Redis, MongoDB, The Graph, relayers, bots, webhooks, payment / PSP integrations, KYC flows, CEX APIs, Docker, CI/CD',
   },
   {
     area: 'Domain',
     items:
-      'DeFi lending, leverage, intent settlement (CoW Swap, Uniswap X, 1inch Fusion, Bebop), wallets / account abstraction, ZK / privacy, NFT marketplaces',
+      'DeFi lending, leverage, intent settlement (CoW Swap, Uniswap X, 1inch Fusion, Bebop), wallets / account abstraction, ZK / privacy, NFT marketplaces, payments & fintech (PSP integrations, KYC, webhooks, CEX APIs)',
   },
   {
     area: 'Chains',
@@ -80,7 +81,7 @@ export const career = [
     years: '2024 — 26',
     title: 'Smart Contract Engineer & Technical Advisor — Liquorice',
     hot: false,
-    text: 'DeFi lending + intent settlement for market makers (CoW Swap, Uniswap X, 1inch Fusion, Bebop). Wrote the protocol core, ran MixBytes / Pessimistic audits, shipped Ethereum / Arbitrum / Base with no incidents. Dashboard from an empty repo. Deepest Web3 experience on the team, so also reviews, architecture and mentoring. Portugal, remote. Jul 2024 – Aug 2026.',
+    text: 'DeFi lending + intent settlement for market makers (CoW Swap, Uniswap X, 1inch Fusion, Bebop). Wrote the protocol core, ran MixBytes / Pessimistic audits, shipped Ethereum / Arbitrum / Base with no incidents. Dashboard from an empty repo. Deepest Web3 experience on the team, so also reviews, architecture and mentoring. When I disagreed with a request, I said so and laid out the options with their costs. Portugal, remote. Jul 2024 – Aug 2026.',
   },
   {
     years: '2022 — 24',
@@ -104,7 +105,7 @@ export const career = [
     years: '2018 — 20',
     title: 'Frontend Engineer — SwapOnline · Next · DaoCasino',
     hot: false,
-    text: 'SwapOnline (Mar–Dec 2018): #4 contributor to MultiCurrencyWallet, ~900 commits. Next / insentry.io (Jan–Jun 2019): realtime camera overlay. DaoCasino (Jul 2019 – Feb 2020): GraphQL UI generator, Feature-Sliced Design, multi-chain wallet factory. Moscow.',
+    text: 'SwapOnline (Mar–Dec 2018): #4 contributor to MultiCurrencyWallet, ~900 commits. Next / insentry.io (Jan–Jun 2019): realtime camera overlay. DaoCasino (Jul 2019 – Feb 2020): GraphQL UI generator, Feature-Sliced Design, multi-chain wallet factory, payments stack built from zero (PSP and CEX API integrations, webhooks, KYC). Moscow.',
   },
   {
     years: '2014 — 18',
