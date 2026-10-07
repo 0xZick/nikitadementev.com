@@ -32,6 +32,9 @@ jobs:
       && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
     environment:
       name: pr-${{ github.event.pull_request.number }}
       url: https://${{ env.PREVIEW_DOMAIN }}
@@ -69,6 +72,25 @@ jobs:
           done
           echo "preview did not answer after 10 attempts" >&2
           exit 1
+      - name: Post the preview link in the PR
+        # One comment per PR, found by its marker and edited in place on every push.
+        # The preview itself is already up; a failed comment must not turn the deploy red.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          body=$(printf '<!-- pr-preview -->\n🔎 **Preview:** https://%s\n\nBuilt from %s. Updated on every push, removed when the PR is closed.' "$PREVIEW_DOMAIN" "${SHA::7}")
+          repo_api="https://api.github.com/repos/${{ github.repository }}"
+          auth="Authorization: Bearer $GH_TOKEN"
+          id=$(curl -fsS --max-time 10 -H "$auth" "$repo_api/issues/${{ github.event.pull_request.number }}/comments?per_page=100" \
+            | jq -r '[.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- pr-preview -->")))][0].id // empty')
+          payload=$(jq -n --arg b "$body" '{body: $b}')
+          if [ -n "$id" ]; then
+            curl -fsS --max-time 10 -X PATCH -H "$auth" "$repo_api/issues/comments/$id" -d "$payload" >/dev/null
+          else
+            curl -fsS --max-time 10 -X POST -H "$auth" "$repo_api/issues/${{ github.event.pull_request.number }}/comments" -d "$payload" >/dev/null
+          fi
 
   teardown:
     if: >-
@@ -79,6 +101,7 @@ jobs:
     timeout-minutes: 5
     permissions:
       deployments: write
+      pull-requests: write
     steps:
       - name: Remove the preview
         env:
@@ -102,3 +125,16 @@ jobs:
               "$api/$id/statuses" -d '{"state":"inactive"}' >/dev/null
             echo "deployment $id marked inactive"
           done
+      - name: Mark the preview comment as removed
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          repo_api="https://api.github.com/repos/${{ github.repository }}"
+          auth="Authorization: Bearer $GH_TOKEN"
+          id=$(curl -fsS --max-time 10 -H "$auth" "$repo_api/issues/${{ github.event.pull_request.number }}/comments?per_page=100" \
+            | jq -r '[.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- pr-preview -->")))][0].id // empty')
+          [ -n "$id" ] || exit 0
+          body=$(printf '<!-- pr-preview -->\n🗑️ Preview ~~https://%s~~ removed: the PR was closed.' "$PREVIEW_DOMAIN")
+          curl -fsS --max-time 10 -X PATCH -H "$auth" "$repo_api/issues/comments/$id" \
+            -d "$(jq -n --arg b "$body" '{body: $b}')" >/dev/null
