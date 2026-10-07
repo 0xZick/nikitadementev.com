@@ -1,0 +1,140 @@
+name: PR preview
+
+# Every pull request gets its own copy of the site at
+# https://nikitadementev-pr-<number>.surge.sh and a "View deployment" button in the PR,
+# rebuilt on each push and torn down when the PR is closed or merged.
+# Production (deploy.yml → GitHub Pages) is not touched.
+#
+# One-time setup, repo Settings → Secrets and variables → Actions:
+#   SURGE_LOGIN  the e-mail of the surge.sh account
+#   SURGE_TOKEN  output of `npx surge token`
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PREVIEW_DOMAIN: nikitadementev-pr-${{ github.event.pull_request.number }}.surge.sh
+
+jobs:
+  deploy:
+    # Fork and Dependabot PRs get no Actions secrets, so the job would only fail; skip them.
+    if: >-
+      github.event.action != 'closed'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: pr-${{ github.event.pull_request.number }}
+      url: https://${{ env.PREVIEW_DOMAIN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Canonical, og:url and og:image point at the preview, so social cards can be checked there.
+      - run: npm run build -- --site "https://$PREVIEW_DOMAIN"
+      - name: Publish to surge
+        # Credentials go through env, not argv, so they stay out of the process list.
+        env:
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: |
+          test -n "$SURGE_TOKEN" || { echo "SURGE_TOKEN secret is not set" >&2; exit 1; }
+          # dist/CNAME is the production domain for GitHub Pages; surge would read it as
+          # the target, so the preview copy goes out without it.
+          rm -f dist/CNAME
+          # Unreviewed content stays out of search engines.
+          printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+          npx --yes surge@0.44.5 ./dist "$PREVIEW_DOMAIN"
+      - name: Check the preview answers
+        # A green job must mean a working link, not just a finished upload.
+        run: |
+          for i in $(seq 1 10); do
+            if curl -fsS --max-time 10 "https://$PREVIEW_DOMAIN/" | grep '<title>' >/dev/null; then
+              echo "preview is up: https://$PREVIEW_DOMAIN"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "preview did not answer after 10 attempts" >&2
+          exit 1
+      - name: Post the preview link in the PR
+        # One comment per PR, found by its marker and edited in place on every push.
+        # The preview itself is already up; a failed comment must not turn the deploy red.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          body=$(printf '<!-- pr-preview -->\n🔎 **Preview:** https://%s\n\nBuilt from %s. Updated on every push, removed when the PR is closed.' "$PREVIEW_DOMAIN" "${SHA::7}")
+          repo_api="https://api.github.com/repos/${{ github.repository }}"
+          auth="Authorization: Bearer $GH_TOKEN"
+          id=$(curl -fsS --max-time 10 -H "$auth" "$repo_api/issues/${{ github.event.pull_request.number }}/comments?per_page=100" \
+            | jq -r '[.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- pr-preview -->")))][0].id // empty')
+          payload=$(jq -n --arg b "$body" '{body: $b}')
+          if [ -n "$id" ]; then
+            curl -fsS --max-time 10 -X PATCH -H "$auth" "$repo_api/issues/comments/$id" -d "$payload" >/dev/null
+          else
+            curl -fsS --max-time 10 -X POST -H "$auth" "$repo_api/issues/${{ github.event.pull_request.number }}/comments" -d "$payload" >/dev/null
+          fi
+
+  teardown:
+    if: >-
+      github.event.action == 'closed'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      deployments: write
+      pull-requests: write
+    steps:
+      - name: Remove the preview
+        env:
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        # A PR whose preview never went up (no secrets yet, deploy failed) has nothing to
+        # remove; that must not paint the merge red.
+        run: |
+          test -n "$SURGE_TOKEN" || { echo "SURGE_TOKEN not set, nothing to tear down"; exit 0; }
+          npx --yes surge@0.44.5 teardown "$PREVIEW_DOMAIN" || echo "::warning::surge teardown failed for $PREVIEW_DOMAIN"
+      - name: Mark the PR deployment inactive
+        # Otherwise the "View deployment" button keeps pointing at the removed preview.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ENV_NAME: pr-${{ github.event.pull_request.number }}
+        run: |
+          api="https://api.github.com/repos/${{ github.repository }}/deployments"
+          ids=$(curl -fsS --max-time 10 -H "Authorization: Bearer $GH_TOKEN" "$api?environment=$ENV_NAME" | jq -r '.[].id')
+          for id in $ids; do
+            curl -fsS --max-time 10 -X POST -H "Authorization: Bearer $GH_TOKEN" \
+              "$api/$id/statuses" -d '{"state":"inactive"}' >/dev/null
+            echo "deployment $id marked inactive"
+          done
+      - name: Mark the preview comment as removed
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          repo_api="https://api.github.com/repos/${{ github.repository }}"
+          auth="Authorization: Bearer $GH_TOKEN"
+          id=$(curl -fsS --max-time 10 -H "$auth" "$repo_api/issues/${{ github.event.pull_request.number }}/comments?per_page=100" \
+            | jq -r '[.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- pr-preview -->")))][0].id // empty')
+          [ -n "$id" ] || exit 0
+          body=$(printf '<!-- pr-preview -->\n🗑️ Preview ~~https://%s~~ removed: the PR was closed.' "$PREVIEW_DOMAIN")
+          curl -fsS --max-time 10 -X PATCH -H "$auth" "$repo_api/issues/comments/$id" \
+            -d "$(jq -n --arg b "$body" '{body: $b}')" >/dev/null
