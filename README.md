@@ -28,30 +28,12 @@ DNS at the registrar:
 | A | @ | 185.199.111.153 |
 | CNAME | www | `<github-user>.github.io` |
 
-## Publish a note
-
-Add `src/content/writing/your-slug.md`:
-
-```md
----
-title: Title
-date: 2026-09-21
-summary: One sentence for the index.
-lang: en
-draft: false
----
-```
-
-`draft: true` keeps it off `/writing` and `/rss.xml`. Notes are published in English; Russian originals sit in `src/content/writing-ru/` (not a collection, not built). Do not publish keys, contract addresses, or exact filter thresholds.
-
 ## Pages
 
 | Path | Job |
 |---|---|
 | `/` | Record: lede, profile, now, career, numbers |
-| `/bio` | Full sourced biography (prose only; tables live on /work) |
-| `/work` | Products, stack, GitHub |
-| `/writing` | Notes from `src/content/writing/`; `/rss.xml` feed |
+| `/work` | Full record: biography, products, stack, GitHub |
 | `/llms.txt` | Machine digest for language models |
 | `/og.png` | Share image. Source: `og-source.html`, rendered 1200×630 with headless Chrome |
 | `/Nikita-Dementev-CV.pdf` | Copy of the Engineering Lead EN résumé; replace when the PDF changes |
@@ -64,5 +46,7 @@ Regenerate the share image after editing `og-source.html`:
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
   --window-size=1200,630 --virtual-time-budget=4000 --screenshot=public/og.png "file://$PWD/og-source.html"
 ```
+
+Retired /writing texts live in `archive/` (not built). `/bio` and `/writing` redirect.
 
 Tornado Cash is stated as Mar 2020 – Feb 2022, left ~6 months before OFAC. Do not compress that.

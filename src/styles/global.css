@@ -130,6 +130,7 @@ button {
   padding: 0 1.6rem;
   color: var(--text);
   flex: 0 0 auto;
+  transition: color 0.2s ease;
 }
 
 .logo:hover {
@@ -182,6 +183,7 @@ button {
   bottom: 0;
   width: 100%;
   height: 0.3rem;
+  transition: background-color 0.2s ease;
 }
 
 .nav-list a:hover::after {
@@ -371,6 +373,10 @@ button {
   letter-spacing: 0.12em;
 }
 
+.links-row a {
+  transition: color 0.2s ease;
+}
+
 .links-row a:hover {
   color: var(--accent);
 }
@@ -396,6 +402,7 @@ button {
   border: 0.1rem solid;
   border-radius: 0.8rem;
   cursor: pointer;
+  transition: box-shadow 0.2s ease;
 }
 
 .btn-primary {
@@ -517,6 +524,7 @@ button {
 .paper a {
   font-size: 1.5rem;
   font-weight: 700;
+  transition: color 0.2s ease;
 }
 
 .paper a:hover {
@@ -608,6 +616,7 @@ button {
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--link) 35%, transparent);
   text-underline-offset: 0.2em;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
 .prose a:hover {
@@ -692,6 +701,10 @@ button {
   display: flex;
   align-items: center;
   gap: 2.4rem;
+}
+
+.footer-socials a {
+  transition: color 0.2s ease;
 }
 
 .footer-socials a:hover {
@@ -908,6 +921,85 @@ button {
   min-width: 9rem;
 }
 
+/* Scroll-reveal: sections/headings fade + slide up as they enter the viewport.
+   Toggled by the IntersectionObserver in Base.astro; neutralized below for
+   prefers-reduced-motion. */
+.reveal {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(1.6rem);
+}
+
+.js .reveal.is-visible,
+.reveal:focus-within {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero entrance: always in view on load, so a CSS animation (no JS) is enough. */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-kicker,
+.hero-name,
+.hero-lede,
+.hero .btn-row,
+.hero .links-row {
+  animation: hero-fade-in 0.6s ease both;
+}
+
+.hero-name {
+  animation-delay: 0.08s;
+}
+
+.hero-lede {
+  animation-delay: 0.16s;
+}
+
+.hero .btn-row {
+  animation-delay: 0.24s;
+}
+
+.hero .links-row {
+  animation-delay: 0.32s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .prose ol {
   padding-left: 2.2rem;
+}
+
+@media print {
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

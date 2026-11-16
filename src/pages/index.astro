@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { person, stats, career, now } from '../data/person';
+import { person, stats, career, now, nftProfit } from '../data/person';
 ---
 
 <Base title={`${person.name} — ${person.kicker}`} pageId="index">
@@ -16,16 +16,14 @@ import { person, stats, career, now } from '../data/person';
       </div>
       <p class="links-row">
         <a href={person.x}>→ X</a>
-        <a href="/bio">→ Bio</a>
         <a href="/work">→ Work</a>
-        <a href="/writing">→ Writing</a>
         <a href="/Nikita-Dementev-CV.pdf">→ CV.pdf</a>
         <a href="/llms.txt">→ llms.txt</a>
       </p>
     </div>
   </section>
 
-  <section class="band">
+  <section class="band reveal">
     <div class="band-inner">
       <h2 class="section-h">01 — profile</h2>
       <p>
@@ -45,7 +43,7 @@ import { person, stats, career, now } from '../data/person';
       <h3 class="prose-h3">From zero</h3>
       <p>
         Empty repo to paying users is the repeating move. nft.multisender.app I founded — bulk ERC-721 / 1155, about
-        $300k/year profit, WalletConnect-verified. Same pattern on NFTxCards and zRex. I hire; I still write the core
+        {nftProfit}, WalletConnect-verified. Same pattern on NFTxCards and zRex. I hire; I still write the core
         myself.
       </p>
       <h3 class="prose-h3">Teams</h3>
@@ -57,12 +55,12 @@ import { person, stats, career, now } from '../data/person';
       <p>
         On the PepperSec core team I wrote the relayer twice, the subgraph, the public CLI, and moved ZK proof
         generation into Web Workers (minutes to seconds). I left ~6 months before the 2022 sanctions. That sentence
-        belongs on the front page because the internet compresses it wrong. <a href="/bio">Full biography →</a>
+        belongs on the front page because the internet compresses it wrong. <a href="/work">Full record →</a>
       </p>
     </div>
   </section>
 
-  <section class="band band-solid">
+  <section class="band band-solid reveal">
     <div class="band-inner">
       <h2 class="section-h">02 — now</h2>
       <p>{now.status}</p>
@@ -84,14 +82,14 @@ import { person, stats, career, now } from '../data/person';
         <li>
           <b>latest</b>
           <span>
-            <a href="/writing">notes</a> · <a href="/Nikita-Dementev-CV.pdf">CV (PDF)</a>
+            <a href="/Nikita-Dementev-CV.pdf">CV (PDF)</a>
           </span>
         </li>
       </ul>
     </div>
   </section>
 
-  <section class="band">
+  <section class="band reveal">
     <div class="band-inner">
       <h2 class="section-h">03 — career</h2>
       {
@@ -109,7 +107,7 @@ import { person, stats, career, now } from '../data/person';
     </div>
   </section>
 
-  <section class="band band-solid">
+  <section class="band band-solid reveal">
     <div class="band-inner">
       <h2 class="section-h">04 — results</h2>
       <div class="tiles">
@@ -125,7 +123,7 @@ import { person, stats, career, now } from '../data/person';
     </div>
   </section>
 
-  <section class="band">
+  <section class="band reveal">
     <div class="band-inner">
       <h2 class="section-h">05 — contact</h2>
       <p class="contact-big">

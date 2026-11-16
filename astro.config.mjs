@@ -4,4 +4,5 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://nikitadementev.com',
   integrations: [sitemap()],
+  redirects: { '/bio': '/work', '/writing': '/' },
 });

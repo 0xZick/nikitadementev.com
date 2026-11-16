@@ -15,9 +15,7 @@ const ogImage = new URL('/og.png', Astro.site);
 
 const nav = [
   { href: '/', id: 'index', label: '_index' },
-  { href: '/bio', id: 'bio', label: '_bio' },
   { href: '/work', id: 'work', label: '_work' },
-  { href: '/writing', id: 'writing', label: '_writing' },
 ];
 
 const jsonLd = {
@@ -73,7 +71,6 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title={`${person.name} — writing`} href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -146,7 +143,7 @@ const jsonLd = {
             <a href={`mailto:${person.email}`}>email</a>
           </div>
           <span>
-            <a href="/llms.txt">_llms.txt</a> · <a href="/rss.xml">_rss</a> · <a href="/Nikita-Dementev-CV.pdf">_cv.pdf</a>
+            <a href="/llms.txt">_llms.txt</a> · <a href="/Nikita-Dementev-CV.pdf">_cv.pdf</a>
           </span>
         </div>
       </footer>
@@ -157,6 +154,31 @@ const jsonLd = {
       burger?.addEventListener('click', () => {
         panel?.classList.toggle('is-open');
       });
+    </script>
+    <script>
+      try {
+        document.documentElement.classList.add('js');
+        const revealTargets = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window && revealTargets.length) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target);
+                }
+              }
+            },
+            { threshold: 0, rootMargin: '0px 0px -5% 0px' }
+          );
+          revealTargets.forEach((el) => observer.observe(el));
+        } else {
+          revealTargets.forEach((el) => el.classList.add('is-visible'));
+        }
+      } catch {
+        // If anything above throws, don't leave content hidden at opacity 0.
+        document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+      }
     </script>
   </body>
 </html>

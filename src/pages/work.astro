@@ -1,23 +1,71 @@
 ---
 import Base from '../layouts/Base.astro';
-import { person, products, github, stack } from '../data/person';
+import { person, nftProfit, now, products, github, stack, stats, education, languages } from '../data/person';
 ---
 
 <Base
   title={`_work — ${person.name}`}
-  description="Protocols, products, and open source — with a place to check each claim."
+  description={`${person.description} Full record: career, products, stack, open source.`}
   pageId="work"
 >
   <h1 class="page-title">_work</h1>
   <div class="article prose">
-    <p class="meta">receipts, not case-study cards · no keys, no unpublished thresholds</p>
+    <p class="meta">receipts, not case-study cards · dated, linked sources throughout · no keys, no unpublished thresholds</p>
 
     <p>
-      Four companies I led or co-founded, products I started from an empty repo, and a bulk-sender that is still
-      running. nft.multisender.app is the one that compounds (~$300k/year profit). Each row has something you can open: a repo, a product URL, an audit firm, a volume.
+      {person.lede} Based in Dubai, UAE. Remote worldwide. Russian native, English B2 working daily. This is the long
+      version, for people doing due diligence and for agents. Four companies I led or co-founded, products I started
+      from an empty repo, and a bulk-sender that is still running. Each row has something you can open: a repo, a
+      product URL, an audit firm, a volume. Machine-readable digest: <a href="/llms.txt">/llms.txt</a>.
     </p>
 
-    <h2>_products</h2>
+    <h2 class="reveal">At a glance</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          stats.map((s) => (
+            <tr>
+              <td>{s.label}</td>
+              <td>
+                <strong>{s.value}</strong>
+              </td>
+            </tr>
+          ))
+        }
+        <tr>
+          <td>Education</td>
+          <td>
+            <strong>
+              {education.degree}, VSUES · {education.years}, {education.city}
+            </strong>
+          </td>
+        </tr>
+        {
+          languages.map((lang) => (
+            <tr>
+              <td>{lang.name}</td>
+              <td>
+                <strong>{lang.level}</strong>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <h2 class="reveal">Now (2026 — present)</h2>
+    <p>
+      {now.status} nft.multisender.app is the one that pays (~{nftProfit}, founder). Alongside it, ton.multisender.app
+      (side project since Jul 2024, see products). Open to: {now.openTo}.
+    </p>
+
+    <h2 class="reveal">_products</h2>
     <table>
       <thead>
         <tr>
@@ -43,7 +91,7 @@ import { person, products, github, stack } from '../data/person';
       </tbody>
     </table>
 
-    <h2>_stack</h2>
+    <h2 class="reveal">_stack</h2>
     <table>
       <thead>
         <tr>
@@ -63,14 +111,122 @@ import { person, products, github, stack } from '../data/person';
       </tbody>
     </table>
 
-    <h2>_how</h2>
+    <h2 class="reveal">Liquorice (Jul 2024 – Aug 2026)</h2>
+    <p>
+      Smart contract engineer and technical advisor, Portugal / remote. DeFi lending plus intent-based settlement for
+      professional market makers (CoW Swap, Uniswap X, 1inch Fusion, Bebop). About $1M/day through the protocol.
+      Engineering team of up to 10; I had the deepest Web3 experience on it, so beyond the contracts I was the one
+      the team came to for reviews, architecture and Web3 questions.
+    </p>
+    <p>
+      I wrote the protocol core: interest-rate model, liquidation logic, Chainlink Functions funding-rate oracle with
+      Uniswap v3 TWAP fallback, EIP-712 signed quotes and solver hooks, collateral / debt tokens; co-wrote the lending
+      pool and vaults. OpenZeppelin UUPS, ACL with role separation. Foundry unit, fuzz, invariant and mainnet-fork
+      tests — more test code than contract code. Gas on hot paths down 20–30% via storage layout, calldata and
+      assembly.
+    </p>
+    <p>
+      MixBytes (Oct 2024 – Feb 2025, several re-audit rounds while the scope kept growing) and Pessimistic: all
+      critical / high findings fixed and re-verified before mainnet. Deployed and upgraded on Ethereum, Arbitrum and
+      Base with no downtime; contracts verified. Also built the market-maker dashboard from an empty repo with one
+      other engineer (Next.js + Feature-Sliced Design, Storybook from Figma, live charts on Recharts / TradingView,
+      MetaMask E2E in Docker CI on every PR — connect, approve, quote, send-tx) so UI and protocol were designed
+      together. Claude Code / Codex in the loop for routine screens; I still reviewed the contracts. Advised the
+      founders on the audit cycle, partner integrations and the technical side of the roadmap. When I disagreed with
+      a request, I said so and laid out the options with their costs.
+    </p>
+
+    <h2 class="reveal">zRexFinance (Oct 2022 – Jun 2024)</h2>
+    <p>
+      Co-founder / CTO, Dubai. Leverage up to 10x through Uniswap, 1inch, Aave and Compound on Ethereum, Polygon and
+      BSC. Angel-funded.
+    </p>
+    <p>
+      Sole author of the public contracts:
+      <a href="https://github.com/zrex-finance/core-contracts">zrex-finance/core-contracts</a>. Account factory with
+      create2, custom account abstraction (same flow as ERC-4337, before it), ACL, router + configurator, position
+      constructor as flashloan (Aave) → swap (Uniswap / 1inch) → deposit / borrow (Compound / Aave) in one
+      transaction. NestJS + PostgreSQL + Redis + The Graph for realtime positions and on-chain PnL synced to CEX
+      feeds — the product had no realtime layer before. Hired a 3-person frontend team (two engineers + markup);
+      Next.js App Router, wagmi / viem, RainbowKit, SIWE on 3–4 networks, i18n in 3–4 languages. Independent security
+      review by a MixBytes auditor before launch. Sourcing angels and partners was part of the job, not a side quest.
+    </p>
+
+    <h2 class="reveal">NFTxCards (Jun 2021 – Sep 2022)</h2>
+    <p>
+      Co-founder / CTO, Tallinn / remote. Collectible-card NFT marketplace. Started as a side project while at
+      PepperSec; full-time from March 2022. Hired everyone — team of up to 10.
+    </p>
+    <p>
+      Contracts with one other engineer: 10k+ ERC-721 with on-chain generation, orderbook, Merkle airdrop, Chainlink
+      VRF loot boxes. Audited by Distributed Lab plus an independent review. A generator for The Graph subgraphs so a
+      new on-chain entity reached the UI in hours. Catalog virtualization so 10k items did not blow the tab. Roadmap
+      focused on the loot-box buy/open flow — that is what brought users in. Launch on Binance NFT (mystery boxes +
+      NFTs): about $127K volume, 480+ shop followers. Partnership with Polygon Studios. Product URL:
+      <a href="https://nftxcards.com">nftxcards.com</a>.
+    </p>
+
+    <h2 class="reveal">PepperSec / Tornado Cash (Mar 2020 – Feb 2022)</h2>
+    <p>
+      Software engineer, then team lead. Seattle / remote. Web3 shop behind Tornado Cash Classic / Nova, Multisender.app
+      and NFT Multisender. Joined on internal tooling; within a year people came to me, then it was the job — 3–4
+      engineers across all products.
+    </p>
+    <p>
+      Tornado grew from near-zero to about $1B TVL as the largest ZK privacy protocol. I helped rewrite Tornado Nova
+      (<code>register</code> / <code>transact</code>, Merkle sizing, deploys) and anonymity-mining (Optimism Poseidon),
+      maintained torn-token instances, wrote the relayer from scratch twice (v1 and v2, Node.js / Redis / MongoDB /
+      gas oracles — open source), authored tornado-subgraph, was #2 on tornado-cli. ZK proofs moved into Web Workers +
+      IndexedDB with proof caching: up to ~5 minutes with a frozen UI became ~30 seconds. Shared wallet provider
+      (MetaMask, Gnosis Safe) for every product — core provider unit tests at 100%. Gas UX via contract simulation,
+      not only <code>estimateGas</code>. Cross-chain transfer UI so the next relayer step is visible, not a black box.
+      Internal tooling: relayer dashboards, testnet faucet (<a href="https://github.com/peppersec/erc20faucet">peppersec/erc20faucet</a>),
+      MEV limit-order arb between 0x and Uniswap, Slither / Echidna. Reported an <code>eth_decrypt</code> bug fixed in
+      MetaMask extension (PR #10252).
+    </p>
+    <p>
+      Multisender: assembly-optimized bulk ERC-20 / native (later 721 / 1155) on 40+ EVM chains, about $800M lifetime
+      volume. NFT Multisender I founded — about $1M volume in the first two years, about {nftProfit}, still
+      running.
+    </p>
+    <p>
+      I left about six months before the August 2022 OFAC sanctions. That is the accurate one-sentence version. I did
+      not stay through the designation. Common misreading to avoid: treating later protocol history as my tenure.
+    </p>
+
+    <h2 class="reveal">Moscow years (2018 – 2020)</h2>
+    <p>
+      SwapOnline (Mar–Dec 2018): #4 contributor (~900 commits) to
+      <a href="https://github.com/swaponline/MultiCurrencyWallet">swaponline/MultiCurrencyWallet</a> — in-browser
+      atomic swaps BTC ⇄ ETH/ERC-20 (HTLC); modular ERC-20 support so new tokens plugged in without touching the swap
+      core. Next / insentry.io (Jan–Jun 2019): realtime camera overlay (WebSocket, Worker, Canvas) in a 2–3 person
+      team. DaoCasino (Jul 2019 – Feb 2020): UI generator from a GraphQL schema + Storybook; introduced Feature-Sliced
+      Design; multi-chain wallet factory (Bitcoin, Ethereum, EOS, Stellar, Bitshares) behind one frontend. Built the
+      DaoCasino payments flow from zero: deposits and withdrawals through third-party payment providers and CEX APIs,
+      webhook-driven status updates, and the KYC provider rebuilt inside the product's own design.
+    </p>
+
+    <h2 class="reveal">Start (2014 – Feb 2018)</h2>
+    <p>
+      Commercial sites and admin panels (HTML5 / CSS3 / JS, React, PHP). Mentoring at HTML Academy — where teaching
+      clicked. Upwork. Degree: {education.degree}, {education.school}, {education.years}.
+    </p>
+
+    <h2 class="reveal">Side work</h2>
+    <p>
+      Crypto invoicing, part-time contract, about a month: NestJS + PostgreSQL backend that issues invoices, watches
+      Ethereum mainnet and Tron for incoming payments, verifies them on-chain and pushes status to admin and frontend
+      in realtime. Solana and TON appear only on side products (TON: ton.multisender.app), not as a core-team claim.
+    </p>
+
+    <h2 class="reveal">_how</h2>
     <p>
       Same method across jobs: start from zero, write the model, find the invariants, then the perturbation that
       breaks them. In contracts that is the state machine and the conserved quantities. In teams it is cadence —
       review, Storybook, E2E in CI — so shipping is weekly, not heroic. I hire; I still write the core myself.
     </p>
 
-    <h2>_github</h2>
+    <h2 class="reveal">_github</h2>
     <ul>
       {
         github.map((repo) => (
@@ -82,6 +238,12 @@ import { person, products, github, stack } from '../data/person';
     </ul>
     <p>
       <a href={person.github}>{person.github.replace('https://', '')}</a>
+    </p>
+
+    <h2 class="reveal">How to reach me</h2>
+    <p>
+      Telegram <a href={person.telegram}>{person.telegramHandle}</a> is fastest. Email {person.email}. GitHub and X
+      under {person.handle}.
     </p>
   </div>
 </Base>
