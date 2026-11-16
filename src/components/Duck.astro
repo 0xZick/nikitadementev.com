@@ -134,14 +134,24 @@ const lottieSrc = fs.existsSync(lottieFile) ? `/ducks/${pose}.json` : undefined;
           const anim = lottie.loadAnimation({
             container: box,
             renderer: 'svg',
+            // Windows with "Animation effects" off reports reduce-motion, and a duck frozen on frame 0
+            // looked broken there. With reduce we play the ~3 s sticker once, then replay on hover / tap.
             loop: !reduce,
-            autoplay: !reduce,
+            autoplay: true,
             path: host.dataset.lottie,
           });
-          anim.addEventListener('DOMLoaded', () => {
-            host.classList.add('is-lottie');
-            if (reduce) anim.goToAndStop(0, true);
-          });
+          anim.addEventListener('DOMLoaded', () => host.classList.add('is-lottie'));
+          if (reduce) {
+            let done = false;
+            anim.addEventListener('complete', () => (done = true));
+            const replay = () => {
+              if (!done) return;
+              done = false;
+              anim.goToAndPlay(0, true);
+            };
+            host.addEventListener('pointerenter', replay);
+            host.addEventListener('click', replay);
+          }
           anim.addEventListener('data_failed', () => box.remove());
         })
         .catch(() => {});
