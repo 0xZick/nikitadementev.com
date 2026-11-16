@@ -16,7 +16,7 @@ const { title, description = person.description, pageId = 'index', ogType = 'web
 const ducksDir = path.join(process.cwd(), 'public', 'ducks');
 const hasLottieDucks = fs.existsSync(ducksDir) && fs.readdirSync(ducksDir).some((f) => f.endsWith('.json'));
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL('/og.png', Astro.site);
+const ogImage = new URL('/og.png?v=2', Astro.site);
 
 const nav = [
   { href: '/', id: 'index', label: 'Home' },

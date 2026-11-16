@@ -43,9 +43,13 @@ Sitemap at `/sitemap-index.xml` (via `@astrojs/sitemap`), `robots.txt` in `publi
 Regenerate the share image after editing `og-source.html`:
 
 ```bash
+python3 -m http.server 4890 --bind 127.0.0.1 &   # lottie loads public/ducks/*.json, file:// is blocked
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
-  --window-size=1200,630 --virtual-time-budget=4000 --screenshot=public/og.png "file://$PWD/og-source.html"
+  --window-size=1200,630 --virtual-time-budget=6000 --screenshot=public/og.png "http://127.0.0.1:4890/og-source.html"
+kill %1
 ```
+
+Then bump `?v=` on `ogImage` in `src/layouts/Base.astro` and refresh Telegram's cache via @WebpageBot.
 
 Retired /writing texts live in `archive/` (not built). `/bio` and `/writing` redirect.
 
