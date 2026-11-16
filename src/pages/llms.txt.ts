@@ -20,7 +20,7 @@ export const GET: APIRoute = async () => {
     '',
     '## Now',
     `- Status: ${now.status}`,
-    `- Open to: ${now.openTo}`,
+    `- Open to: ${now.openTo.join(', ')} (${now.openToAreas})`,
     `- Where: ${now.where}`,
     `- Reply: ${now.reply}`,
     '',

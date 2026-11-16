@@ -1,6 +1,9 @@
 ---
 import '../styles/global.css';
 import { person } from '../data/person';
+import Duck from '../components/Duck.astro';
+import fs from 'node:fs';
+import path from 'node:path';
 
 type Props = {
   title: string;
@@ -10,12 +13,14 @@ type Props = {
 };
 
 const { title, description = person.description, pageId = 'index', ogType = 'website' } = Astro.props;
+const ducksDir = path.join(process.cwd(), 'public', 'ducks');
+const hasLottieDucks = fs.existsSync(ducksDir) && fs.readdirSync(ducksDir).some((f) => f.endsWith('.json'));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
 
 const nav = [
-  { href: '/', id: 'index', label: '_index' },
-  { href: '/work', id: 'work', label: '_work' },
+  { href: '/', id: 'index', label: 'Home' },
+  { href: '/work', id: 'work', label: 'Work' },
 ];
 
 const jsonLd = {
@@ -51,8 +56,8 @@ const jsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0b1118" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3f6fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0f1a" media="(prefers-color-scheme: dark)" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -75,7 +80,7 @@ const jsonLd = {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Onest:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -87,12 +92,13 @@ const jsonLd = {
       data-domains="nikitadementev.com"
     ></script>
   </head>
-  <body class={pageId === 'index' ? 'page-index' : undefined}>
+  <body class={`page-${pageId}`}>
     <div class="layout">
       <header class="header">
         <div class="header-inner">
           <a class="logo" href="/" aria-label={person.handle}>
-            <span class="logo-text">_{person.handle.toLowerCase()}</span>
+            <span class="logo-duck" aria-hidden="true"><Duck pose="logo" /></span>
+            <span class="logo-text">{person.handle}</span>
           </a>
 
           <nav class="nav" aria-label="Site">
@@ -110,7 +116,7 @@ const jsonLd = {
           </nav>
 
           <div class="header-actions">
-            <a class="btn btn-dark" href={person.telegram}>_telegram</a>
+            <a class="btn btn-dark" href={person.telegram}>Telegram</a>
             <button class="burger" type="button" aria-label="Open menu" data-burger>
               <span></span>
             </button>
@@ -124,7 +130,7 @@ const jsonLd = {
               </a>
             ))
           }
-          <a href={person.telegram}>_telegram</a>
+          <a href={person.telegram}>Telegram</a>
         </nav>
       </header>
 
@@ -136,14 +142,15 @@ const jsonLd = {
         <div class="footer-inner">
           <span>© {new Date().getFullYear()} {person.name} · {person.location}</span>
           <div class="footer-socials">
-            <span>_socials:</span>
+            <span>Socials:</span>
             <a href={person.github}>github</a>
             <a href={person.x}>x.com</a>
             <a href={person.telegram}>telegram</a>
             <a href={`mailto:${person.email}`}>email</a>
           </div>
+          {hasLottieDucks && <span>Ducks: <a href="https://t.me/addemoji/CastilosDuck">@Albertflix's duck</a></span>}
           <span>
-            <a href="/llms.txt">_llms.txt</a> · <a href="/Nikita-Dementev-CV.pdf">_cv.pdf</a>
+            <a href="/llms.txt">llms.txt</a> · <a href="/Nikita-Dementev-CV.pdf">CV (PDF)</a>
           </span>
         </div>
       </footer>

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "h=\"$CLAUDE_PROJECT_DIR/../.claude/hooks/stop-check.sh\"; [ -x \"$h\" ] || exit 0; exec \"$h\" \"$CLAUDE_PROJECT_DIR\"",
+            "timeout": 60,
+            "statusMessage": "Быстрая проверка проекта"
+          }
+        ]
+      }
+    ]
+  }
+}

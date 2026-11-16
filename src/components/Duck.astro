@@ -1,0 +1,473 @@
+---
+/**
+ * Duck mascot. If public/ducks/<pose>.json exists, plays that Lottie sticker
+ * (CastilosDuck pack by @Albertflix, credited in the footer); otherwise falls back to
+ * the inline SVG drawn for this site. Decorative: aria-hidden.
+ *
+ * pose: 'hero' (scarf, bobbing, blinking), 'wave' (raised wing + heart),
+ *       'wink' (SVG: holds a coin; Lottie: duck at a desk), 'lost' (head tilt, question mark).
+ * Size it from the outside: the svg fills the width of its container.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+
+type Props = {
+  pose?: 'hero' | 'wave' | 'wink' | 'lost' | 'search' | 'logo';
+  class?: string;
+};
+const { pose = 'hero', class: extra = '' } = Astro.props;
+
+// If public/ducks/<pose>.json exists at build time, the page lazy-loads lottie-web and plays
+// it instead of the SVG (the SVG stays as the fallback and as the no-JS view).
+const lottieFile = path.join(process.cwd(), 'public', 'ducks', `${pose}.json`);
+const lottieSrc = fs.existsSync(lottieFile) ? `/ducks/${pose}.json` : undefined;
+---
+
+<div class="duck-host" data-lottie={lottieSrc}>
+
+<svg
+  class={`duck duck--${pose} ${extra}`.trim()}
+  viewBox="0 0 140 130"
+  aria-hidden="true"
+  focusable="false"
+>
+  <ellipse class="shadow" cx="62" cy="121" rx="40" ry="5" />
+
+  <g class="rig">
+    <!-- feet -->
+    <ellipse class="beak-c" cx="50" cy="115" rx="9" ry="4" />
+    <ellipse class="beak-c" cx="75" cy="115" rx="9" ry="4" />
+
+    <!-- tail -->
+    <path class="body-c" d="M24 82 Q3 72 8 52 Q25 58 36 74 Z" />
+
+    <!-- body -->
+    <ellipse class="body-c" cx="60" cy="85" rx="42" ry="30" />
+    <ellipse class="belly" cx="68" cy="94" rx="26" ry="16" />
+
+    <!-- wing -->
+    <g class="wing">
+      <path class="shade-c" d="M38 82 Q30 102 58 104 Q73 93 63 75 Q50 73 38 82 Z" />
+    </g>
+
+    {
+      pose === 'wink' && (
+        <g class="coin">
+          <circle class="coin-c" cx="34" cy="104" r="11" />
+          <circle class="coin-ring" cx="34" cy="104" r="7" />
+          <path class="coin-ring" d="M34 99.5 v9 M30.5 104 h7" />
+        </g>
+      )
+    }
+
+    <!-- head -->
+    <g class="head">
+      {
+        pose === 'hero' && (
+          <g class="scarf">
+            <path class="scarf-band" d="M62 66 Q82 86 105 64" />
+            <path class="scarf-stripe" d="M62 66 Q82 86 105 64" />
+            <path class="scarf-tail" d="M70 80 L63 103 L77 100 L82 82 Z" />
+          </g>
+        )
+      }
+      <circle class="body-c" cx="82" cy="48" r="26" />
+      <path class="body-c" d="M77 24 Q70 12 79 9 Q78 17 87 22 Z" />
+      <path class="beak-c" d="M104 46 Q128 46 126 55 Q118 64 104 59 Z" />
+      <path class="beak-line" d="M106 54 Q116 56 124 55" />
+      <ellipse class="blush" cx="96" cy="55" rx="5" ry="3.2" />
+      <g class="eye-g">
+        <ellipse class="eye" cx="92" cy="42" rx="4" ry="5" />
+        <circle class="eye-shine" cx="93.5" cy="40" r="1.5" />
+      </g>
+      {pose === 'wink' && <path class="eye-wink" d="M87 43 Q92 36 98 43" />}
+    </g>
+
+    {
+      pose === 'wave' && (
+        <g class="heart">
+          <path d="M0 -2 C-6 -10 -16 -2 0 9 C16 -2 6 -10 0 -2 Z" />
+        </g>
+      )
+    }
+    {
+      pose === 'wink' && (
+        <g class="spark">
+          <path d="M0 -11 Q1.5 -1.5 11 0 Q1.5 1.5 0 11 Q-1.5 1.5 -11 0 Q-1.5 -1.5 0 -11 Z" />
+        </g>
+      )
+    }
+    {
+      pose === 'lost' && (
+        <g class="qmark">
+          <path class="q-line" d="M-7 -4 a7 7 0 1 1 11 5.5 q-4 3 -4 8" />
+          <circle class="q-dot" cx="0" cy="17" r="2.2" />
+        </g>
+      )
+    }
+  </g>
+</svg>
+</div>
+
+<script>
+  // Only does anything on pages where a duck has a Lottie file (data-lottie present).
+  const hosts = document.querySelectorAll<HTMLElement>('[data-lottie]');
+  if (hosts.length) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const LOTTIE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie_light.min.js';
+    const load = () =>
+      new Promise<any>((resolve, reject) => {
+        if ((window as any).lottie) return resolve((window as any).lottie);
+        const el = document.createElement('script');
+        el.src = LOTTIE_URL;
+        el.async = true;
+        el.onload = () => resolve((window as any).lottie);
+        el.onerror = reject;
+        document.head.appendChild(el);
+      });
+    const play = (host: HTMLElement) =>
+      load()
+        .then((lottie) => {
+          const box = document.createElement('div');
+          box.className = 'duck-anim';
+          host.appendChild(box);
+          const anim = lottie.loadAnimation({
+            container: box,
+            renderer: 'svg',
+            loop: !reduce,
+            autoplay: !reduce,
+            path: host.dataset.lottie,
+          });
+          anim.addEventListener('DOMLoaded', () => {
+            host.classList.add('is-lottie');
+            if (reduce) anim.goToAndStop(0, true);
+          });
+          anim.addEventListener('data_failed', () => box.remove());
+        })
+        .catch(() => {});
+    // Fetch each animation only when its duck nears the viewport.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            io.unobserve(e.target);
+            play(e.target as HTMLElement);
+          }),
+        { rootMargin: '200px' },
+      );
+      hosts.forEach((h) => io.observe(h));
+    } else hosts.forEach(play);
+  }
+</script>
+
+<style is:global>
+  .duck-host.is-lottie > .duck {
+    display: none;
+  }
+  .duck-anim {
+    width: 100%;
+  }
+  .duck-anim svg {
+    width: 100%;
+    height: auto;
+  }
+</style>
+
+<style>
+  .duck {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    /* sticker-style outline, like a die-cut chat sticker */
+    filter: drop-shadow(1.6px 0 0 var(--duck-edge, #fff)) drop-shadow(-1.6px 0 0 var(--duck-edge, #fff))
+      drop-shadow(0 1.6px 0 var(--duck-edge, #fff)) drop-shadow(0 -1.6px 0 var(--duck-edge, #fff));
+  }
+  .shadow {
+    fill: rgba(10, 15, 26, 0.2);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: shadow 2.6s ease-in-out infinite;
+  }
+  .body-c {
+    fill: #ffd34d;
+  }
+  .shade-c {
+    fill: #f2b33d;
+  }
+  .belly {
+    fill: #ffe38a;
+  }
+  .beak-c {
+    fill: #ff8a3d;
+  }
+  .beak-line {
+    fill: none;
+    stroke: #c9531a;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .blush {
+    fill: #ff8fa3;
+    opacity: 0.6;
+  }
+  .eye {
+    fill: #0a0f1a;
+  }
+  .eye-shine {
+    fill: #fff;
+  }
+  .eye-g,
+  .eye-wink {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .eye-g {
+    animation: blink 5s infinite;
+  }
+  .eye-wink {
+    fill: none;
+    stroke: #0a0f1a;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0;
+    animation: wink 4.4s infinite;
+  }
+
+  .rig {
+    transform-box: view-box;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  .head {
+    transform-box: view-box;
+    transform-origin: 80px 70px;
+    animation: nod 5.2s ease-in-out infinite;
+  }
+  .wing {
+    transform-box: view-box;
+    transform-origin: 58px 78px;
+  }
+
+  /* hero */
+  .scarf-band {
+    fill: none;
+    stroke: #2e9bff;
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+  .scarf-stripe {
+    fill: none;
+    stroke: #f2b33d;
+    stroke-width: 10;
+    stroke-dasharray: 3.5 9;
+    stroke-dashoffset: 2;
+  }
+  .scarf-tail {
+    fill: #2e9bff;
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    animation: sway 2.6s ease-in-out infinite;
+  }
+
+  /* wave */
+  .duck--wave .wing {
+    transform: rotate(-72deg);
+    animation: wave 0.9s ease-in-out infinite alternate;
+  }
+  .heart {
+    fill: #ff5d7a;
+    transform-box: view-box;
+    transform: translate(122px, 24px);
+  }
+  .heart path {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: float 2.6s ease-in infinite;
+  }
+
+  /* wink */
+  .coin {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: coin 2.6s ease-in-out infinite;
+  }
+  .coin-c {
+    fill: #f2b33d;
+    stroke: #b87700;
+    stroke-width: 1.5;
+  }
+  .coin-ring {
+    fill: none;
+    stroke: #b87700;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+  .spark {
+    fill: #f2b33d;
+    transform-box: view-box;
+    transform: translate(118px, 20px);
+  }
+  .spark path {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: twinkle 2.2s ease-in-out infinite;
+  }
+
+  /* lost */
+  .duck--lost .head {
+    animation: tilt 3.4s ease-in-out infinite;
+  }
+  .duck--lost .eye-g {
+    transform: translate(1px, -2px);
+  }
+  .qmark {
+    transform-box: view-box;
+    transform: translate(116px, 20px);
+  }
+  .q-line {
+    fill: none;
+    stroke: #f2b33d;
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .q-dot {
+    fill: #f2b33d;
+  }
+  .qmark {
+    animation: hop 2.2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+  @keyframes shadow {
+    0%,
+    100% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scaleX(0.92);
+      opacity: 0.8;
+    }
+  }
+  @keyframes nod {
+    0%,
+    100% {
+      transform: rotate(0);
+    }
+    45% {
+      transform: rotate(2.5deg);
+    }
+    70% {
+      transform: rotate(-1.5deg);
+    }
+  }
+  @keyframes tilt {
+    0%,
+    100% {
+      transform: rotate(-9deg);
+    }
+    50% {
+      transform: rotate(4deg);
+    }
+  }
+  @keyframes blink {
+    0%,
+    93%,
+    100% {
+      transform: scaleY(1);
+    }
+    96% {
+      transform: scaleY(0.1);
+    }
+  }
+  @keyframes wink {
+    0%,
+    62%,
+    74%,
+    100% {
+      opacity: 0;
+    }
+    66%,
+    70% {
+      opacity: 1;
+    }
+  }
+  @keyframes sway {
+    0%,
+    100% {
+      transform: rotate(-5deg);
+    }
+    50% {
+      transform: rotate(6deg);
+    }
+  }
+  @keyframes wave {
+    from {
+      transform: rotate(-52deg);
+    }
+    to {
+      transform: rotate(-92deg);
+    }
+  }
+  @keyframes float {
+    0% {
+      transform: translateY(8px) scale(0.5);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-14px) scale(1);
+      opacity: 0;
+    }
+  }
+  @keyframes coin {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-4deg);
+    }
+    50% {
+      transform: translateY(-2px) rotate(5deg);
+    }
+  }
+  @keyframes twinkle {
+    0%,
+    100% {
+      transform: scale(0.45) rotate(0);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1) rotate(20deg);
+      opacity: 1;
+    }
+  }
+  @keyframes hop {
+    0%,
+    100% {
+      transform: translate(116px, 20px);
+    }
+    50% {
+      transform: translate(116px, 14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .duck *,
+    .duck {
+      animation: none !important;
+    }
+    .heart path {
+      opacity: 1;
+    }
+  }
+</style>

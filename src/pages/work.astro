@@ -1,16 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
+import Duck from '../components/Duck.astro';
 import { person, nftProfit, now, products, github, stack, stats, education, languages } from '../data/person';
 ---
 
 <Base
-  title={`_work — ${person.name}`}
+  title={`Work — ${person.name}`}
   description={`${person.description} Full record: career, products, stack, open source.`}
   pageId="work"
 >
-  <h1 class="page-title">_work</h1>
+  <div class="page-head"><h1 class="page-title">Work</h1><div class="duck-search"><Duck pose="search" /></div></div>
   <div class="article prose">
-    <p class="meta">receipts, not case-study cards · dated, linked sources throughout · no keys, no unpublished thresholds</p>
+    <p class="meta meta-sans">Full record: every role and product, with dates and links you can check.</p>
 
     <p>
       {person.lede} Based in Dubai, UAE. Remote worldwide. Russian native, English B2 working daily. This is the long
@@ -62,10 +63,10 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
     <h2 class="reveal">Now (2026 — present)</h2>
     <p>
       {now.status} nft.multisender.app is the one that pays (~{nftProfit}, founder). Alongside it, ton.multisender.app
-      (side project since Jul 2024, see products). Open to: {now.openTo}.
+      (side project since Jul 2024, see products). Open to: {now.openTo.join(', ').toLowerCase()} in {now.openToAreas}.
     </p>
 
-    <h2 class="reveal">_products</h2>
+    <h2 class="reveal">Products</h2>
     <table>
       <thead>
         <tr>
@@ -91,7 +92,7 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
       </tbody>
     </table>
 
-    <h2 class="reveal">_stack</h2>
+    <h2 class="reveal">Stack</h2>
     <table>
       <thead>
         <tr>
@@ -136,7 +137,7 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
       a request, I said so and laid out the options with their costs.
     </p>
 
-    <h2 class="reveal">zRexFinance (Oct 2022 – Jun 2024)</h2>
+    <h2 class="reveal">zRexFinance (Mar 2023 – Jun 2024)</h2>
     <p>
       Co-founder / CTO, Dubai. Leverage up to 10x through Uniswap, 1inch, Aave and Compound on Ethereum, Polygon and
       BSC. Angel-funded.
@@ -152,10 +153,9 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
       review by a MixBytes auditor before launch. Sourcing angels and partners was part of the job, not a side quest.
     </p>
 
-    <h2 class="reveal">NFTxCards (Jun 2021 – Sep 2022)</h2>
+    <h2 class="reveal">NFTxCards (Mar 2022 – Feb 2023)</h2>
     <p>
-      Co-founder / CTO, Tallinn / remote. Collectible-card NFT marketplace. Started as a side project while at
-      PepperSec; full-time from March 2022. Hired everyone — team of up to 10.
+      Co-founder / CTO, Tallinn / remote. Collectible-card NFT marketplace. Hired everyone — team of up to 10.
     </p>
     <p>
       Contracts with one other engineer: 10k+ ERC-721 with on-chain generation, orderbook, Merkle airdrop, Chainlink
@@ -219,14 +219,14 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
       in realtime. Solana and TON appear only on side products (TON: ton.multisender.app), not as a core-team claim.
     </p>
 
-    <h2 class="reveal">_how</h2>
+    <h2 class="reveal">How I work</h2>
     <p>
       Same method across jobs: start from zero, write the model, find the invariants, then the perturbation that
       breaks them. In contracts that is the state machine and the conserved quantities. In teams it is cadence —
       review, Storybook, E2E in CI — so shipping is weekly, not heroic. I hire; I still write the core myself.
     </p>
 
-    <h2 class="reveal">_github</h2>
+    <h2 class="reveal">GitHub</h2>
     <ul>
       {
         github.map((repo) => (

@@ -1,11 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import Duck from '../components/Duck.astro';
 import { person } from '../data/person';
 ---
 
 <Base title={`404 — ${person.name}`} pageId="404">
-  <h1 class="page-title">_404</h1>
+  <h1 class="page-title">404</h1>
   <div class="article prose">
+    <div class="duck-404"><Duck pose="lost" /></div>
     <p class="hero-kicker">not found</p>
     <p class="hero-name" style="font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.1">Nothing at this path.</p>
     <p class="meta">The site is small. Everything is one click from here.</p>

@@ -22,7 +22,8 @@ export const person = {
 
 export const now = {
   status: 'Independent since Sep 2026, after two years at Liquorice. Building my own products.',
-  openTo: 'protocol / full-stack contract work, technical advisory, co-founding — DeFi, wallets, infra',
+  openTo: ['Smart contract & full-stack roles', 'Technical advisory', 'Co-founding a product'],
+  openToAreas: 'DeFi, wallets, infrastructure',
   where: 'Dubai, UTC+4 · remote worldwide · English B2, Russian native',
   reply: 'Telegram, same day',
 };
@@ -75,27 +76,27 @@ export const stats = [
   { value: '~$1B', label: 'peak TVL, Tornado Cash', hot: true },
   { value: '~$1M/d', label: 'Liquorice protocol throughput', hot: false },
   { value: '40+', label: 'EVM chains with my contracts live', hot: false },
-  { value: '~$300k', label: 'profit in its best year, nft.multisender.app (founder)', hot: true },
+  { value: '~$300k', label: 'nft.multisender.app profit, best year', hot: true },
 ];
 
 export const career = [
   {
     years: '2024 — 26',
-    title: 'Smart Contract Engineer & Technical Advisor — Liquorice',
+    title: 'Software Engineer & Technical Advisor — Liquorice',
     hot: false,
     text: 'DeFi lending + intent settlement for market makers (CoW Swap, Uniswap X, 1inch Fusion, Bebop). Wrote the protocol core, ran MixBytes / Pessimistic audits, shipped Ethereum / Arbitrum / Base with no incidents. Dashboard from an empty repo. Deepest Web3 experience on the team, so also reviews, architecture and mentoring. When I disagreed with a request, I said so and laid out the options with their costs. Portugal, remote. Jul 2024 – Aug 2026.',
   },
   {
-    years: '2022 — 24',
+    years: '2023 — 24',
     title: 'Co-Founder / CTO — zRexFinance',
     hot: false,
-    text: 'DeFi leverage up to 10x via Uniswap, 1inch, Aave, Compound. Sole author of the public core-contracts. NestJS + PostgreSQL + The Graph backend. Hired the 3-person frontend team. Angel-funded. MixBytes auditor review before launch. Dubai. Oct 2022 – Jun 2024.',
+    text: 'DeFi leverage up to 10x via Uniswap, 1inch, Aave, Compound. Sole author of the public core-contracts. NestJS + PostgreSQL + The Graph backend. Hired the 3-person frontend team. Angel-funded. MixBytes auditor review before launch. Dubai. Mar 2023 – Jun 2024.',
   },
   {
-    years: '2021 — 22',
+    years: '2022 — 23',
     title: 'Co-Founder / CTO — NFTxCards',
     hot: false,
-    text: 'Collectible-card NFT marketplace. Hired a team of up to 10 from zero. Contracts (ERC-721, orderbook, Chainlink VRF loot boxes, Merkle airdrops) audited by Distributed Lab. Binance NFT launch ~$127K volume, 480+ shop followers. Partnership with Polygon Studios. Tallinn, remote. Jun 2021 – Sep 2022; full-time from Mar 2022.',
+    text: 'Collectible-card NFT marketplace. Hired a team of up to 10 from zero. Contracts (ERC-721, orderbook, Chainlink VRF loot boxes, Merkle airdrops) audited by Distributed Lab. Binance NFT launch ~$127K volume, 480+ shop followers. Partnership with Polygon Studios. Tallinn, remote. Mar 2022 – Feb 2023.',
   },
   {
     years: '2020 — 22',
@@ -126,14 +127,14 @@ export const products = [
   },
   {
     name: 'zRexFinance',
-    years: '2022–24',
+    years: '2023–24',
     role: 'contracts, backend, team',
     proof: 'github.com/zrex-finance/core-contracts, sole author',
     href: 'https://github.com/zrex-finance/core-contracts',
   },
   {
     name: 'NFTxCards',
-    years: '2021–22',
+    years: '2022–23',
     role: 'co-founder, contracts + team',
     proof: 'Binance NFT ~$127K; Polygon Studios; Distributed Lab audit',
     href: 'https://nftxcards.com',

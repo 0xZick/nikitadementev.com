@@ -1,18 +1,34 @@
 ---
 import Base from '../layouts/Base.astro';
+import Duck from '../components/Duck.astro';
 import { person, stats, career, now, nftProfit } from '../data/person';
 ---
 
 <Base title={`${person.name} — ${person.kicker}`} pageId="index">
-  <section class="band band-solid">
+  <div class="ticker" aria-hidden="true">
+    <div class="tick-track">
+      {
+        [0, 1].map(() =>
+          stats.map((s) => (
+            <span class={`tick ${s.hot ? 'hot' : ''}`}>
+              <b>{s.value}</b> {s.label}
+            </span>
+          ))
+        )
+      }
+    </div>
+  </div>
+
+  <section class="band band-hero">
     <div class="hero">
+      <div class="hero-duck"><Duck pose="hero" /></div>
       <p class="hero-kicker">{person.kicker}</p>
-      <h1 class="hero-name">Nikita<br />Dementev</h1>
+      <h1 class="hero-name">Nikita<br /><em>Dementev</em></h1>
       <p class="hero-lede" set:html={person.ledeHtml} />
       <div class="btn-row">
         <a class="btn btn-primary" href={person.telegram}>Telegram — {person.telegramHandle}</a>
         <a class="btn btn-outline" href={`mailto:${person.email}`}>{person.email}</a>
-        <a class="btn btn-dark" href={person.github}>_github</a>
+        <a class="btn btn-dark" href={person.github}>GitHub</a>
       </div>
       <p class="links-row">
         <a href={person.x}>→ X</a>
@@ -25,73 +41,90 @@ import { person, stats, career, now, nftProfit } from '../data/person';
 
   <section class="band reveal">
     <div class="band-inner">
-      <h2 class="section-h">01 — profile</h2>
-      <p>
+      <h2 class="section-h">Profile</h2>
+      <p class="lead">
         I write Solidity and TypeScript, hire people, and take protocols through audit to mainnet. The work is public
         enough to check: contracts on GitHub, volumes on the products, audit firms named. Almost all of it is dated.
         Founders don't have to hand me the scope. When a request is shaped wrong, they hear it from me early, along
         with what the alternatives cost.
       </p>
-      <h3 class="prose-h3">Protocol engineering</h3>
-      <p>
-        At Liquorice I designed the lending core — interest-rate model, liquidations, Chainlink Functions oracle,
-        EIP-712 intent settlement — and shipped it on Ethereum, Arbitrum and Base after MixBytes and Pessimistic.
-        Throughput ~$1M/day, no incidents on upgrades. Before that I was sole author of the zRex leverage contracts
-        (account factory, custom account abstraction, flashloan → swap → deposit) and co-wrote NFTxCards (10k+ ERC-721,
-        VRF loot boxes, Merkle airdrops).
-      </p>
-      <h3 class="prose-h3">From zero</h3>
-      <p>
-        Empty repo to paying users is the repeating move. nft.multisender.app I founded — bulk ERC-721 / 1155, about
-        {nftProfit}, WalletConnect-verified. Same pattern on NFTxCards and zRex. I hire; I still write the core
-        myself.
-      </p>
-      <h3 class="prose-h3">Teams</h3>
-      <p>
-        Hired ~30 engineers over the career; teams of up to 10. Process is the leverage: Feature-Sliced Design,
-        Storybook, E2E in CI, review standards. People I hired from outside IT made it to senior.
-      </p>
-      <h3 class="prose-h3">Tornado Cash, then out</h3>
-      <p>
-        On the PepperSec core team I wrote the relayer twice, the subgraph, the public CLI, and moved ZK proof
-        generation into Web Workers (minutes to seconds). I left ~6 months before the 2022 sanctions. That sentence
-        belongs on the front page because the internet compresses it wrong. <a href="/work">Full record →</a>
-      </p>
+      <div class="rows">
+        <details class="row" open>
+          <summary>
+            <h3 class="prose-h3">From zero</h3>
+            <span class="card-chev" aria-hidden="true"></span>
+          </summary>
+          <p class="card-body">Empty repo to paying users is the repeating move. nft.multisender.app I founded — bulk ERC-721 / 1155, about
+          {nftProfit}, WalletConnect-verified. Same pattern on NFTxCards and zRex. I hire; I still write the core
+          myself.</p>
+        </details>
+        <details class="row" open>
+          <summary>
+            <h3 class="prose-h3">Teams</h3>
+            <span class="card-chev" aria-hidden="true"></span>
+          </summary>
+          <p class="card-body">Hired ~30 engineers over the career; teams of up to 10. Process is the leverage: Feature-Sliced Design,
+          Storybook, E2E in CI, review standards. People I hired from outside IT made it to senior.</p>
+        </details>
+        <details class="row">
+          <summary>
+            <h3 class="prose-h3">Protocol engineering</h3>
+            <span class="card-chev" aria-hidden="true"></span>
+          </summary>
+          <p class="card-body">At Liquorice I designed the lending core — interest-rate model, liquidations, Chainlink Functions oracle,
+          EIP-712 intent settlement — and shipped it on Ethereum, Arbitrum and Base after MixBytes and Pessimistic. Throughput ~$1M/day, no incidents on upgrades. Before that I was sole author of the zRex leverage contracts
+          (account factory, custom account abstraction, flashloan → swap → deposit) and co-wrote NFTxCards (10k+ ERC-721,
+          VRF loot boxes, Merkle airdrops).</p>
+        </details>
+        <details class="row">
+          <summary>
+            <h3 class="prose-h3">Tornado Cash, then out</h3>
+            <span class="card-chev" aria-hidden="true"></span>
+          </summary>
+          <p class="card-body">On the PepperSec core team I wrote the relayer twice, the subgraph, the public CLI, and moved ZK proof
+          generation into Web Workers (minutes to seconds). I left ~6 months before the 2022 sanctions. That sentence
+          belongs on the front page because the internet compresses it wrong. <a href="/work">Full record →</a></p>
+        </details>
+      </div>
     </div>
   </section>
 
   <section class="band band-solid reveal">
     <div class="band-inner">
-      <h2 class="section-h">02 — now</h2>
-      <p>{now.status}</p>
-      <ul class="now-list">
-        <li>
-          <b>open to</b>
-          <span>{now.openTo}</span>
-        </li>
-        <li>
-          <b>where</b>
-          <span>{now.where}</span>
-        </li>
-        <li>
-          <b>reply</b>
-          <span>
+      <h2 class="section-h">Now</h2>
+      <p class="bubble">{now.status}</p>
+      <dl class="now-list">
+        <div>
+          <dt>Open to</dt>
+          <dd>
+            <ul class="tags">{now.openTo.map((t) => <li>{t}</li>)}</ul>
+            <span class="tags-note">in {now.openToAreas}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Where</dt>
+          <dd>{now.where}</dd>
+        </div>
+        <div>
+          <dt>Reply</dt>
+          <dd>
             {now.reply} — <a href={person.telegram}>{person.telegramHandle}</a>
-          </span>
-        </li>
-        <li>
-          <b>latest</b>
-          <span>
+          </dd>
+        </div>
+        <div>
+          <dt>Latest</dt>
+          <dd>
             <a href="/Nikita-Dementev-CV.pdf">CV (PDF)</a>
-          </span>
-        </li>
-      </ul>
+          </dd>
+        </div>
+      </dl>
+      <div class="duck-now"><Duck pose="wink" /></div>
     </div>
   </section>
 
   <section class="band reveal">
     <div class="band-inner">
-      <h2 class="section-h">03 — career</h2>
+      <h2 class="section-h">Career</h2>
       {
         career.map((row) => (
           <div class={`tl ${row.hot ? 'hot' : ''}`}>
@@ -109,7 +142,7 @@ import { person, stats, career, now, nftProfit } from '../data/person';
 
   <section class="band band-solid reveal">
     <div class="band-inner">
-      <h2 class="section-h">04 — results</h2>
+      <h2 class="section-h">Results</h2>
       <div class="tiles">
         {
           stats.map((s) => (
@@ -123,15 +156,20 @@ import { person, stats, career, now, nftProfit } from '../data/person';
     </div>
   </section>
 
-  <section class="band reveal">
+  <section class="band band-contact reveal">
     <div class="band-inner">
-      <h2 class="section-h">05 — contact</h2>
+      <h2 class="section-h">Contact</h2>
       <p class="contact-big">
         Telegram is fastest — <a href={person.telegram}>{person.telegramHandle}</a>
       </p>
       <p class="meta">
         {person.email} · {person.github.replace('https://', '')} · {person.x.replace('https://', '')}
       </p>
+      <div class="duck-contact"><Duck pose="wave" /></div>
     </div>
   </section>
+  <script>
+    // Print and Ctrl+F should see the full text: open every card before printing.
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.row').forEach((d) => (d.open = true)));
+  </script>
 </Base>
