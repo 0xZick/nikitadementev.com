@@ -120,10 +120,17 @@ export const career = [
 
 export const products = [
   {
+    name: 'HyperEVM liquidations',
+    years: '2025–26',
+    role: 'MEV: liquidation bot',
+    proof: '~$150k in about two months',
+  },
+  {
     name: 'Liquorice',
     years: '2024–26',
     role: 'protocol core + dashboard',
     proof: '~$1M/day; MixBytes + Pessimistic; ETH / Arb / Base',
+    href: 'https://liquorice.tech',
   },
   {
     name: 'zRexFinance',
@@ -137,14 +144,14 @@ export const products = [
     years: '2022–23',
     role: 'co-founder, contracts + team',
     proof: 'Binance NFT ~$127K; Polygon Studios; Distributed Lab audit',
-    href: 'https://nftxcards.com',
+    href: 'https://github.com/NFTxCards/core-contracts',
   },
   {
     name: 'Tornado Cash (PepperSec)',
     years: '2020–22',
     role: 'relayer, subgraph, CLI, Nova',
     proof: 'core team; left before OFAC; peak ~$1B TVL',
-    href: 'https://github.com/0xZick',
+    href: 'https://github.com/tornadocash/tornado-relayer',
   },
   {
     name: 'Multisender.app',
@@ -178,12 +185,15 @@ export const products = [
 
 export const github = [
   'zrex-finance/core-contracts',
-  'tornado-relayer',
-  'tornado-nova',
-  'tornado-subgraph',
-  'tornado-cli',
+  'NFTxCards/core-contracts',
+  'tornadocash/tornado-relayer',
+  'tornadocash/tornado-pool-relayer',
+  'tornadocash/tornado-nova',
+  'tornadocash/tornado-subgraph',
+  'tornadocash/tornado-cli',
+  'tornadocash/tornado-anonymity-mining',
+  'tornadocash/provider',
   'tornado-classic-ui',
-  'tornado-anonymity-mining',
   'torn-token',
   'peppersec/erc20faucet',
   'swaponline/MultiCurrencyWallet',
