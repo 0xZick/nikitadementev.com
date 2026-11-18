@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const articles = (await getCollection('articles')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Base
+  title="Articles — Nikita Dementev"
+  description="Long-form write-ups on MEV, liquidations and on-chain research."
+  pageId="articles"
+>
+  <div class="page-head"><h1 class="page-title">Articles</h1></div>
+  <div class="article prose">
+    <ul class="article-list">
+      {
+        articles.map((a) => (
+          <li>
+            <p class="meta">
+              <time datetime={a.data.date.toISOString().slice(0, 10)}>{a.data.date.toISOString().slice(0, 10)}</time>
+            </p>
+            <h2 class="article-list-title">
+              <a href={`/articles/${a.id}`}>{a.data.title}</a>
+            </h2>
+            <p>{a.data.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>

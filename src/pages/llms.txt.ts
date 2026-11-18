@@ -1,7 +1,9 @@
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
 import { person, stats, career, products, github, stack, education, languages, now } from '../data/person';
 
 export const GET: APIRoute = async () => {
+  const articles = (await getCollection('articles')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   const body = [
     `# ${person.name} (${person.handle})`,
     '',
@@ -16,6 +18,8 @@ export const GET: APIRoute = async () => {
     '## Pages',
     `- Index: ${person.site}/`,
     `- Work: ${person.site}/work/`,
+    `- Articles: ${person.site}/articles/`,
+    ...articles.map((a) => `  - ${a.data.title} (${a.data.date.toISOString().slice(0, 10)}): ${person.site}/articles/${a.id}/`),
     `- CV (PDF): ${person.site}/Nikita-Dementev-CV.pdf`,
     '',
     '## Now',

@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const date = article.data.date.toISOString().slice(0, 10);
+---
+
+<Base
+  title={`${article.data.title} — Nikita Dementev`}
+  description={article.data.description}
+  pageId="articles"
+  ogType="article"
+>
+  <div class="page-head"><p class="page-title article-title">{article.data.title}</p></div>
+  <article class="article prose">
+    <p class="meta">
+      <time datetime={date}>{date}</time>
+      {
+        article.data.thread && (
+          <>
+            {' · '}Originally an <a href={article.data.thread}>X thread</a>
+          </>
+        )
+      }
+    </p>
+    <Content />
+    <p class="meta" style="margin-top: 3.2rem"><a href="/articles">← all articles</a></p>
+  </article>
+</Base>

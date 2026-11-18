@@ -1264,3 +1264,59 @@ h3 {
   font-size: 1.4rem;
   color: var(--faint);
 }
+
+/* ---------- articles ---------- */
+
+.article-title {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.article {
+  overflow-wrap: anywhere;
+}
+
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 1.5rem;
+  border: 0.1rem solid var(--line);
+  border-radius: 1.2rem;
+}
+
+.prose ul {
+  padding-left: 2.2rem;
+}
+
+.article-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.article-list li + li {
+  margin-top: 3.2rem;
+}
+
+.article-list .meta {
+  margin-bottom: 0.4rem;
+}
+
+.article-list .article-list-title {
+  margin: 0 0 0.8rem;
+}
+
+.article-list .article-list-title::before {
+  display: none;
+}
+
+.article-list .article-list-title a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.article-list .article-list-title a:hover {
+  color: var(--link);
+}

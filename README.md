@@ -34,6 +34,7 @@ DNS at the registrar:
 |---|---|
 | `/` | Record: lede, profile, now, career, numbers |
 | `/work` | Full record: biography, products, stack, GitHub |
+| `/articles`, `/articles/<slug>` | Long-form write-ups; Markdown in `src/content/articles/`, images in `public/articles/<slug>/` |
 | `/llms.txt` | Machine digest for language models |
 | `/og.png` | Share image. Source: `og-source.html`, rendered 1200×630 with headless Chrome |
 | `/Nikita-Dementev-CV.pdf` | Copy of the Engineering Lead EN résumé; replace when the PDF changes |
