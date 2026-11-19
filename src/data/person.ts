@@ -123,7 +123,8 @@ export const products = [
     name: 'HyperEVM liquidations',
     years: '2025–26',
     role: 'MEV: liquidation bot',
-    proof: '~$150k in about two months',
+    proof: '~$100k in about two months',
+    proofHref: '/articles/',
   },
   {
     name: 'Liquorice',

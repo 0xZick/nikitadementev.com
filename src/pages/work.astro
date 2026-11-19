@@ -85,7 +85,7 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
               <td>{p.href ? <a href={p.href}>{p.name}</a> : p.name}</td>
               <td>{p.role}</td>
               <td class="nowrap">{p.years}</td>
-              <td>{p.proof}</td>
+              <td>{p.proofHref ? <a href={p.proofHref}>{p.proof}</a> : p.proof}</td>
             </tr>
           ))
         }
@@ -221,7 +221,7 @@ import { person, nftProfit, now, products, github, stack, stats, education, lang
 
     <h2 class="reveal">MEV: HyperEVM liquidations (winter 2025–26)</h2>
     <p>
-      Liquidation bot on HyperEVM lending markets around New Year: about $150k in roughly two months. Earlier MEV
+      Liquidation bot on HyperEVM lending markets around New Year: about $100k in roughly two months. Earlier MEV
       work: limit-order arb between 0x and Uniswap at PepperSec.
     </p>
 
